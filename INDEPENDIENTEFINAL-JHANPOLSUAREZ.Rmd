@@ -1,0 +1,321 @@
+DATA: GOBERNANZA (JHANPOL SUAREZ)
+
+MI INDEPENDIENTE
+
+#LIMPIEZA
+```{r}
+#########  LIMPIEZA
+library(rio)
+DATAJS=import("https://github.com/JhanpolS/variableindep/raw/master/GobernanzaPROMED__OFICIAL.xlsx")
+str(DATAJS)
+names(DATAJS)=gsub(" ","",names(DATAJS))
+names(DATAJS)
+table(DATAJS$RURALSECTOR,useNA ='always')
+table(DATAJS$EDUCATION,useNA ='always')
+#ME QUEDO SÓLO CON LAS FILAS QUE CONTIENEN LOS PROMEDIOS DE CADA PAÍS Y SUS VARIABLES
+DATAJS=DATAJS[-(1:8),]
+DATAJS=DATAJS[-(2:9),]
+DATAJS=DATAJS[-(3:10),]
+DATAJS=DATAJS[-(4:11),]
+DATAJS=DATAJS[-(5:12),]
+DATAJS=DATAJS[-(6:13),]
+DATAJS=DATAJS[-(7:14),]
+DATAJS=DATAJS[-(8:15),]
+DATAJS=DATAJS[-(9:16),]
+DATAJS=DATAJS[-(10:17),]
+DATAJS=DATAJS[-(11:18),]
+DATAJS=DATAJS[-(12:19),]
+DATAJS=DATAJS[-(13:20),]
+DATAJS=DATAJS[-(14:21),]
+DATAJS=DATAJS[-(15:22),]
+DATAJS=DATAJS[-(16:23),]
+DATAJS=DATAJS[-(17:24),]
+DATAJS=DATAJS[-(18:25),]
+DATAJS=DATAJS[-(19:26),]
+DATAJS=DATAJS[-(20:27),]
+DATAJS=DATAJS[-(21:28),]
+DATAJS=DATAJS[-(22:29),]
+DATAJS=DATAJS[-(23:30),]
+DATAJS=DATAJS[-(24:31),]
+DATAJS=DATAJS[-(25:32),]
+DATAJS=DATAJS[-(26:33),]
+DATAJS=DATAJS[-(27:34),]
+DATAJS=DATAJS[-(28:35),]
+DATAJS=DATAJS[-(29:36),]
+DATAJS=DATAJS[-(30:37),]
+DATAJS=DATAJS[-(31:38),]
+DATAJS=DATAJS[-(32:39),]
+DATAJS=DATAJS[-(33:40),]
+DATAJS=DATAJS[-(34:41),]
+DATAJS=DATAJS[-(35:42),]
+DATAJS=DATAJS[-(36:43),]
+DATAJS=DATAJS[-(37:44),]
+DATAJS=DATAJS[-(38:45),]
+DATAJS=DATAJS[-(39:46),]
+DATAJS=DATAJS[-(40:47),]
+DATAJS=DATAJS[-(41:48),]
+DATAJS=DATAJS[-(42:49),]
+DATAJS=DATAJS[-(43:50),]
+DATAJS=DATAJS[-(44:51),]
+DATAJS=DATAJS[-(45:52),]
+DATAJS=DATAJS[-(46:53),]
+DATAJS=DATAJS[-(47:54),]
+DATAJS=DATAJS[-(48:55),]
+DATAJS=DATAJS[-(49:56),]
+DATAJS=DATAJS[-(50:57),]
+DATAJS=DATAJS[-(51:58),]
+DATAJS=DATAJS[-(52:59),]
+DATAJS=DATAJS[-(53:60),]
+DATAJS=DATAJS[-(54:61),]
+DATAJS=DATAJS[-(55:62),]
+DATAJS=DATAJS[-(56:63),]
+
+#Elimino columnas
+DATAJS$Country_ISO=NULL
+DATAJS$Year=NULL
+DATAJS$OVERALLGOVERNANCE=NULL
+names(DATAJS)
+
+names(DATAJS)
+names(DATAJS)=c("Pais","SAFETYandRULEOFLAW","RULEOFLAW","TRANSPARENCYandACCOUNTABILITY","PERSONALSAFETY","NATIONALSECURITY","PARTICIPATIONandHUMANRIGHTS","PARTICIPATION","RIGHTS","GENDER","SUSTAINABLEECONOMICOPPORTUNITY","PUBLICMANAGEMENT", "BUSINESSENVIRONMENT","INFRASTRUCTURE","RURALSECTOR","HUMANDEVELOPMENT","WELFARE","EDUCATION","HEALTH")
+
+
+
+
+```
+Cambiando el nombre de los países
+
+```{r}
+#LE CAMBIO EL NOMBRE A LOS PAÍSES
+DATAJS[DATAJS$Pais=="Botswana",'Pais']="Botsuana"
+
+DATAJS[DATAJS$Pais=="Cameroon",'Pais']="Camerun"
+
+DATAJS[DATAJS$Pais=="Djibouti",'Pais']="Yibuti"
+
+DATAJS[DATAJS$Pais=="Djibouti",'Pais']="Yibuti"
+DATAJS[DATAJS$Pais=="Comoros",'Pais']="Comoras"
+DATAJS[DATAJS$Pais=="Egypt",'Pais']="Egipto"
+DATAJS[DATAJS$Pais=="Equatorial Guinea",'Pais']="Guinea ecuatorial"
+DATAJS[DATAJS$Pais=="Ethiopia",'Pais']="Etiopia"
+DATAJS[DATAJS$Pais=="Kenya",'Pais']="Kenia"
+
+DATAJS[DATAJS$Pais=="Libya",'Pais']="Libia"
+DATAJS[DATAJS$Pais=="Malawi",'Pais']="Malaui"
+DATAJS[DATAJS$Pais=="Mauritius",'Pais']="Mauricio"
+DATAJS[DATAJS$Pais=="Rwanda",'Pais']="Ruanda"
+DATAJS[DATAJS$Pais=="São Tomé & Príncipe",'Pais']="Santo Tome y Principe"
+DATAJS[DATAJS$Pais=="Sierra Leone",'Pais']="Sierra Leona"
+DATAJS[DATAJS$Pais=="South Africa",'Pais']="Sudafrica"
+DATAJS[DATAJS$Pais=="South Sudan",'Pais']="Sudan del Sur"
+DATAJS[DATAJS$Pais=="Swaziland",'Pais']="Suazilandia"
+DATAJS[DATAJS$Pais=="Tunisia",'Pais']="Tunez"
+DATAJS[DATAJS$Pais=="ZImbabwe",'Pais']="Zimbabue"
+DATAJS[DATAJS$Pais=="Algeria",'Pais']="Argelia"
+DATAJS[DATAJS$Pais=="Central African Republic",'Pais']="Republica Centroafricana"
+DATAJS[DATAJS$Pais=="Democratic Republic of Congo",'Pais']="Republica Democratica del Congo"
+
+DATAJS[DATAJS$Pais=="Côte d'Ivoire",'Pais']="Costa de Marfil"
+
+DATAJS[DATAJS$Pais=="Lesotho",'Pais']="Lesoto"
+
+DATAJS[DATAJS$Pais=="Guinea-Bissau",'Pais']="Guinea Bisau"
+DATAJS[DATAJS$Pais=="Morocco",'Pais']="Marruecos"
+DATAJS[DATAJS$Pais=="Congo",'Pais']="Republica del Congo"
+
+```
+
+#Convierto a numérico y organizo la data
+```{r}
+DATAJS <- DATAJS[with(DATAJS, order(DATAJS$Pais)), ]
+
+DATAJS[,c(2:15)]=lapply(DATAJS[,c(2:15)], as.numeric)
+row.names(DATAJS)=NULL
+DATAJS=DATAJS[-47,] #Elimino Sudán del Sur, a penas se creó en el 2011
+row.names(DATAJS)=NULL
+row.names(DATAJS)=DATAJS$Pais
+#Elimino scores que no necesito
+DATAJS=DATAJS[,-c(2,7,11,16)] # sin los Scores ni nombre de país.
+DATAJS=na.omit(DATAJS) 
+#Verifico la limpieza de mi data
+str(DATAJS)
+```
+Evaluando Data
+Pruebas previas para el análisis factorial 
+
+```{r}
+# esta es:
+theDataFactoExplo=DATAJS[,-1] # sin los Scores ni nombre de país.
+
+library(polycor)
+corMatrixFactoExplo=polycor::hetcor(theDataFactoExplo)$correlations
+```
+Exploro correlaciones:
+
+Sin evaluar significancia
+```{r}
+library(ggcorrplot)
+
+ggcorrplot(corMatrixFactoExplo)
+```
+Evaluando significancia
+```{r}
+ggcorrplot(corMatrixFactoExplo,
+          p.mat = cor_pmat(corMatrixFactoExplo),
+          insig = "blank")
+```
+Vemos bloques correlacionados, tengo esperanzas de un buen análisis
+
+Verificaré si los datos me permiten factorizar
+```{r}
+library(psych)
+psych::KMO(corMatrixFactoExplo)
+
+#El overall es mayor a 0.6. Por lo tanto la factorización tiene esperanzas.
+```
+Ahora se verifica si la matriz de correlaciones es adecuada
+
+Primera prueba: 
+Hnula: La matriz de correlacion es una matriz identidad
+
+```{r}
+cortest.bartlett(corMatrixFactoExplo,n=nrow(theDataFactoExplo))$p.value>0.05
+```
+Segunda prueba:
+Hnula: La matriz de correlacion es una matriz singular.
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corMatrixFactoExplo)
+```
+Determinaremos en cuantos factores o variables latentes podríamos redimensionar la data:
+```{r}
+
+fa.parallel(theDataFactoExplo,fm = 'ML', fa = 'fa')
+
+```
+Se sugiere 1, veamos:
+
+Redimensionar a numero menor de factores
+Resultado inicial:
+
+```{r}
+library(GPArotation)
+resfaFactoExplo <- fa(theDataFactoExplo,nfactors = 2,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+```{r}
+print(resfaFactoExplo$loadings)
+#Esto nos dirá que variable pertenece a cada latente.
+```
+Resultado mejorado
+```{r}
+print(resfaFactoExplo$loadings,cutoff = 0.51)
+#Esto nos dice que el Indice de Gobernanza está partido. Es interesante ver cómo el factorial reconoce estructuras latentes.
+```
+
+
+
+
+
+Resultado visual
+```{r}
+fa.diagram(resfaFactoExplo)
+
+```
+
+Evaluando Resultado obtenido:
+La Raíz del error cuadrático medio corregida está cerca a cero?
+```{r}
+resfaFactoExplo$crms
+#Por convención del curso si baja de 0.1 esta cerca a cero. Por lo tanto afirmamos que sí.
+```
+La Raíz del error cuadrático medio de aproximación es menor a 0.05?
+```{r}
+resfaFactoExplo$RMSEA
+#Vemos que aquí tiene debilidad
+```
+El índice de Tucker-Lewis es mayor a 0.9:
+```{r}
+resfaFactoExplo$TLI
+# Nuestro indice de Tucker lewis no es mayor a 0.9.
+```
+¿Que variables aportaron mas a los factores?
+```{r}
+sort(resfaFactoExplo$communality)
+
+```
+Que variables contribuyen a mas de un factor?
+
+```{r}
+sort(resfaFactoExplo$complexity)
+#Tenemos complicaciones con RURALSECTO, BUSINESSEENVIRONMENT,WELFARE Y TRANSPARENCYANDACCOUNTABILITY porque coquetean con casi 2 factores. 
+```
+
+
+
+Posibles valores proyectados:
+
+```{r}
+as.data.frame(resfaFactoExplo$scores)
+```
+```{r}
+DATAJSFACTO=cbind(DATAJS[1],as.data.frame(resfaFactoExplo$scores))
+names(DATAJSFACTO)=c("Pais","PoliticasModernas","PoliticasAntiguas")
+
+library(plotly)
+plot_ly(data=DATAJSFACTO, x = ~PoliticasModernas, y = ~PoliticasAntiguas, text=~Pais) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'PolíticasModernas'),yaxis = list(title = 'PolíticasAntiguas')))
+```
+```{r}
+library(fpc)
+library(cluster)
+library(dbscan)
+g.dist.cmd = daisy(DATAJSFACTO[,c(2:3)], metric = 'euclidean')
+kNNdistplot(g.dist.cmd, k=2)
+```
+
+
+
+
+
+
+
+```{r}
+
+resDB=fpc::dbscan(g.dist.cmd, eps=0.6, MinPts=2,method = 'dist')
+DATAJSFACTO$clustDB=as.factor(resDB$cluster)
+aggregate(cbind(PoliticasModernas, PoliticasAntiguas) # dependientes
+          ~ clustDB, # nivel
+          data = DATAJSFACTO,    # data
+          max)  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+library(fpc)
+library(cluster)
+library(dbscan)
+plot_ly(data=DATAJSFACTO, x = ~PoliticasModernas, y = ~PoliticasAntiguas, text=~Pais, color = ~clustDB) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'Politicas Modernas'),
+                     yaxis = list(title = 'Politicas Antiguas')))
+```
+
+
+
+
+
+
