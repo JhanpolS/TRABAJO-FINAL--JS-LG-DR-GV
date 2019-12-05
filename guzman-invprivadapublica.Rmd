@@ -1,0 +1,991 @@
+DATA: INVERSIÓN PRIVADA EN SALUD E INVERSIÓN PÚBLICA EN SALUD (LEDA GUZMÁN)
+
+1.INVERSIÓN PRIVADA EN SALUD
+Gasto privado privado en salud (PVT-D) como porcentaje del gasto actual en salud (CHE=current health expenditure) (%): La parte del gasto privado interno en salud del gasto total actual en salud indica cuánto es financiado internamente por el sector privado. Los fondos del sector privado provienen de hogares, corporaciones y organizaciones sin fines de lucro. Dichos gastos pueden ser prepagos para un seguro médico voluntario o pagarse directamente a los proveedores de atención médica. Este indicador describe el papel del sector privado en la financiación de la asistencia sanitaria en relación con fuentes públicas o externas
+SECTOR PRIVADO
+
+LIMPIEZA
+```{r} 
+
+#IMPORTAMOS LA DATA DESDE GITHUB
+library(rio)
+data="https://github.com/lguzman08/trabajosestad/raw/master/africa.xlsx"
+invprivada=import(data)
+```
+
+```{r}
+#VISUALIZAMOS EL NÚMERO DE FILAS Y COLUMNAS
+
+dim(invprivada) #filas, columnas
+```
+
+
+```{r}
+#EN ESTE PASO PODREMOS VISUALIZAR LOS NOMBRES DE CADA COLUMNA
+names(invprivada)
+```
+
+
+```{r}
+#RECODIFICAMOS LOS NOMBRES DE LA COLUMNAS
+names(invprivada)=c("Pais","2015","2014","2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000")
+```
+
+
+```{r}
+#CONVERTIMOS DESDE LA COLUMNA 2 HASTA LA 17 EN NUMÉRICAS
+invprivada[,c(2:17)]=lapply(invprivada[,c(2:17)],as.numeric)
+```
+
+
+```{r}
+#EN ESTE PASO, SOLO NOS QUEDAREMOS CON LOS CASOS COMPLETOS
+invprivada = invprivada[complete.cases(invprivada),]
+```
+
+
+```{r}
+#AQUI SE UTILIZA ROW NAMES PARA RESETEAR LA DATA Y ASÍ EMPIECE DE 1
+
+row.names(invprivada)=NULL
+```
+
+
+```{r}
+#EN ESTE PASO ELIJO LOS PAÍSES QUE DESEO
+invprivada=invprivada[c(2,4,16,20,24,25,26,28,30,31,35,36,39,43,45,49,52,54,57,58,61,64,65,77,84,85,88,89,92,95,96,101,102,104,108,109,125,131,133,135,136,139,141,146,149,152,156,164),]
+```
+
+```{r}
+#EN ESTE CASO UTILIZAMOS "ORDER" PARA ORDENAR LOS PAÍSES ALFABÉTICAMENTE 
+
+invprivada[,order(c(2:17))]
+```
+
+
+```{r}
+#SE PROCEDE A ORDENAR LOS AÑOS PARA QUEE EMPIECE DESDE EL 2000
+invprivada=invprivada[,c(1,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2)]
+```
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,6,7
+invprivada[,c(2,3,4,5,6,7,8,9)]=NULL
+```
+
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+invprivada[,1]
+invprivada[invprivada$Pais=="Cameroon",'Pais']="Camerun"
+invprivada[invprivada$Pais=="Central African Republic",'Pais']="Republica Centroafricana"
+invprivada[invprivada$Pais=="Comoros",'Pais']="Comoras"
+invprivada[invprivada$Pais=="Côte d'Ivoire",'Pais']="Costa de Marfil"
+invprivada[invprivada$Pais=="Democratic Republic of the Congo",'Pais']="Republica Democratica del Congo"
+invprivada[invprivada$Pais=="Egypt",'Pais']="Egipto"
+invprivada[invprivada$Pais=="Djibouti",'Pais']="Yibuti"
+invprivada[invprivada$Pais=="Ethiopia",'Pais']="Etiopia"
+invprivada[invprivada$Pais=="Kenya",'Pais']="Kenia"
+invprivada[invprivada$Pais=="Guinea-Bissau",'Pais']="Guinea Bisau"
+invprivada[invprivada$Pais=="Lesotho",'Pais']="Lesoto"
+invprivada[invprivada$Pais=="Malawi",'Pais']="Malaui"
+invprivada[invprivada$Pais=="Sao Tome and Principe",'Pais']="Santo Tome y Principe"
+invprivada[invprivada$Pais=="Sierra Leone",'Pais']="Sierra Leona"
+invprivada[invprivada$Pais=="South Africa",'Pais']="Sudafrica"
+invprivada[invprivada$Pais=="United Republic of Tanzania",'Pais']="Tanzania"
+invprivada[invprivada$Pais=="Rwanda",'Pais']="Ruanda"
+invprivada[invprivada$Pais=="Tunisia",'Pais']="Tunez"
+invprivada[invprivada$Pais=="Morocco",'Pais']="Marruecos"
+invprivada[invprivada$Pais=="Mauritius",'Pais']="Mauricio"
+invprivada[invprivada$Pais=="Botswana",'Pais']="Botsuana"
+invprivada[invprivada$Pais=="Algeria",'Pais']="Argelia"
+invprivada[invprivada$Pais=="Congo",'Pais']="Republica del Congo"
+
+```
+
+
+```{r}
+#AQUI SE UTILIZA ROW NAMES PARA RESETEAR LA DATA Y ASÍ EMPIECE DE 1
+row.names(invprivada)=NULL
+```
+
+
+```{r}
+#SE PROCEDERÁ A SACAR LA MEDIA DE CADA PAÍS CON SU RESPECTIVOS AÑOS
+invprivada$INVERPRIVADA = rowMeans(invprivada[,2:9], na.rm = TRUE)
+
+#ORDENANDO ALFABETICAMENTE
+invprivada <- invprivada[with(invprivada, order(invprivada$Pais)), ]
+
+```
+
+2.INVERSIÓN PÚBLICA EN SALUD
+
+AÑO 2008
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2008 
+library(htmltab)
+linkpublico= 'https://datosmacro.expansion.com/estado/gasto?anio=2008'
+linkpath='//*[@id="node-10595"]/div[4]/div'
+p2008 = htmltab(doc = linkpublico,
+                which =linkpath)
+```
+
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,6,7, 8
+p2008[,c(2,3,4,6,7,8)]=NULL
+
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2008)[1]= 'Pais'
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2008)[2]= 'GP2008'
+```
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA
+p2008$`GP2008` = gsub("\\%", "", p2008$`GP2008`)
+p2008$`GP2008` = gsub("\\,", ".", p2008$`GP2008`)
+```
+
+
+
+```{r}
+#SE PROCEDE A QUEDARSE CON LOS CASOS COMPLETOS
+p2008 = p2008[complete.cases(p2008),]
+```
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2008$`GP2008`=as.numeric(p2008$`GP2008`)
+```
+
+```{r}
+
+#VERIFICAMOS SI LOS DATOS DE LA COLUMNA GP SE CONVIRTIERON EN NUMÉRICOS
+str(p2008)
+```
+
+ 
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2008$`Pais` = gsub("\\[+]", " ", p2008$`Pais`)
+
+p2008$`Pais` = gsub("\\+", "", p2008$`Pais`)
+
+
+p2008$`Pais` = gsub("\\[", "", p2008$`Pais`)
+
+p2008$`Pais` = gsub("\\]", "", p2008$`Pais`)
+```
+
+
+
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2008)=NULL
+```
+
+
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2008=p2008[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+#AQUI ELIMINO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES PARA REORDENARLAS NUMÉRICAMENT
+row.names(p2008)=NULL
+```
+
+```{r}
+
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2008$Pais=gsub(' ',"",p2008$Pais)
+
+p2008[p2008$Pais=="Benín",'Pais']="Benin"
+p2008[p2008$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2008[p2008$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2008[p2008$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2008[p2008$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2008[p2008$Pais=="Camerún",'Pais']= "Camerun"
+p2008[p2008$Pais=="Etiopía",'Pais']= "Etiopia"
+p2008[p2008$Pais=="Gabón",'Pais']= "Gabon"
+p2008[p2008$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2008[p2008$Pais=="Malí",'Pais']= "Mali"
+p2008[p2008$Pais=="Níger",'Pais']= "Niger"
+p2008[p2008$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2008[p2008$Pais=="Sudán",'Pais']= "Sudan"
+p2008[p2008$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2008[p2008$Pais=="Túnez",'Pais']= "Tunez"
+p2008[p2008$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2008[p2008$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2008[p2008$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2008[p2008$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+
+AÑO 2009
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2009
+library(htmltab)
+link2009= 'https://datosmacro.expansion.com/estado/gasto?anio=2009'
+linkpath2009= '//*[@id="node-10595"]/div[4]/div/div[2]'
+p2009= htmltab(doc = link2009,
+                     which = linkpath2009)
+ 
+```
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,6,7,8
+p2009[,c(2,3,4,6,7,8)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2009)[1]= 'Pais'
+```
+
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2009)[2]= 'GP2009'
+```
+
+
+`
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA
+ p2009$`GP2009` = gsub("\\%", "", p2009$`GP2009`)
+ p2009$`GP2009` = gsub("\\,", ".", p2009$`GP2009`)
+```
+
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2009$`Pais` = gsub("\\[+]", " ", p2009$`Pais`)
+
+p2009$`Pais` = gsub("\\+", "", p2009$`Pais`)
+
+p2009$`Pais` = gsub("\\[", "", p2009$`Pais`)
+p2009$`Pais` = gsub("\\]", "", p2009$`Pais`)
+```
+
+
+```{r}
+#SE PROCEDE A QUEDARSE CON LOS CASOS COMPLETOS
+p2009 = p2009[complete.cases(p2009),]
+```
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2009$`GP2009`=as.numeric(p2009$`GP2009`)
+```
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2009)=NULL
+```
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2009=p2009[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2009$Pais=gsub(' ',"",p2009$Pais)
+str(p2009)
+
+p2009[p2009$Pais=="Benín",'Pais']="Benin"
+p2009[p2009$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2009[p2009$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2009[p2009$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2009[p2009$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2009[p2009$Pais=="Camerún",'Pais']= "Camerun"
+p2009[p2009$Pais=="Etiopía",'Pais']= "Etiopia"
+p2009[p2009$Pais=="Gabón",'Pais']= "Gabon"
+p2009[p2009$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2009[p2009$Pais=="Malí",'Pais']= "Mali"
+p2009[p2009$Pais=="Níger",'Pais']= "Niger"
+p2009[p2009$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2009[p2009$Pais=="Sudán",'Pais']= "Sudan"
+p2009[p2009$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2009[p2009$Pais=="Túnez",'Pais']= "Tunez"
+p2009[p2009$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2009[p2009$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2009[p2009$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2009[p2009$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2009)=NULL
+```
+
+
+AÑO 2010
+
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2009
+library(htmltab)
+link2010= 'https://datosmacro.expansion.com/estado/gasto?anio=2010'
+linkpath2010='//*[@id="tb1"]'
+p2010 = htmltab(doc =  link2010,
+                      which = linkpath2010)
+```
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,7,8, 9
+p2010[,c(2,3,4,5,7,8,9)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2010)[1]= 'Pais'
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2010)[2]= 'GP2010'
+```
+
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA
+ p2010$`GP2010` = gsub("\\%", "", p2010$`GP2010`)
+
+ p2010$`GP2010` = gsub("\\,", ".", p2010$`GP2010`)
+```
+
+
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2010$`Pais` = gsub("\\[+]", " ", p2010$`Pais`)
+
+p2010$`Pais` = gsub("\\+", "", p2010$`Pais`)
+
+p2010$`Pais` = gsub("\\[", "", p2010$`Pais`)
+
+p2010$`Pais` = gsub("\\]", "", p2010$`Pais`)
+```
+
+```{r}
+#NOS QUEDAMOS CON LOS CASOS COMPLETOS DEL AÑO 2010
+p2010 = p2010[complete.cases(p2010),]
+```
+
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2010$`GP2010`=as.numeric(p2010$`GP2010`)
+```
+
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2010)=NULL
+```
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2010=p2010[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2010$Pais=gsub(' ',"",p2010$Pais)
+str(p2010)
+
+p2010[p2010$Pais=="Benín",'Pais']="Benin"
+p2010[p2010$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2010[p2010$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2010[p2010$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2010[p2010$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2010[p2010$Pais=="Camerún",'Pais']= "Camerun"
+p2010[p2010$Pais=="Etiopía",'Pais']= "Etiopia"
+p2010[p2010$Pais=="Gabón",'Pais']= "Gabon"
+p2010[p2010$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2010[p2010$Pais=="Malí",'Pais']= "Mali"
+p2010[p2010$Pais=="Níger",'Pais']= "Niger"
+p2010[p2010$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2010[p2010$Pais=="Sudán",'Pais']= "Sudan"
+p2010[p2010$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2010[p2010$Pais=="Túnez",'Pais']= "Tunez"
+p2010[p2010$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2010[p2010$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2010[p2010$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2010[p2010$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+```{r}
+#AQUI ELIMINO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES PARA REORDENARLAS NUMÉRICAMENT
+row.names(p2010)=NULL
+```
+
+
+AÑO 2011
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2011
+library(htmltab)
+link2011= 'https://datosmacro.expansion.com/estado/gasto?anio=2011'
+linkpath2011='//*[@id="tb1"]'
+p2011 = htmltab(doc =  link2011,
+                      which = linkpath2011)
+         
+```
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,7,8,9
+p2011[,c(2,3,4,5,7,8,9)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2011)[1]= 'Pais'
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2011)[2]= 'GP2011'
+```
+
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA COLUMNA DOS
+p2011$`GP2011` = gsub("\\%", "", p2011$`GP2011`)
+p2011$`GP2011` = gsub("\\,", ".", p2011$`GP2011`)
+ p2011$`GP2011` = gsub("\\%", "", p2011$`GP2011`)
+```
+
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2011$`Pais` = gsub("\\[+]", " ", p2011$`Pais`)
+p2011$`Pais` = gsub("\\+", "", p2011$`Pais`)
+p2011$`Pais` = gsub("\\[", "", p2011$`Pais`)
+p2011$`Pais` = gsub("\\]", "", p2011$`Pais`)
+```
+
+```{r}
+#SE PROCEDE A QUEDARSE CON LOS CASOS COMPLETOS
+p2011 = p2011[complete.cases(p2011),]
+```
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2011$`GP2011`=as.numeric(p2011$`GP2011`)
+```
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2011)=NULL
+```
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2011=p2011[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+
+p2011$Pais=gsub(' ',"",p2011$Pais)
+str(p2011)
+
+p2011[p2011$Pais=="Benín",'Pais']="Benin"
+p2011[p2011$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2011[p2011$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2011[p2011$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2011[p2011$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2011[p2011$Pais=="Camerún",'Pais']= "Camerun"
+p2011[p2011$Pais=="Etiopía",'Pais']= "Etiopia"
+p2011[p2011$Pais=="Gabón",'Pais']= "Gabon"
+p2011[p2011$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2011[p2011$Pais=="Malí",'Pais']= "Mali"
+p2011[p2011$Pais=="Níger",'Pais']= "Niger"
+p2011[p2011$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2011[p2011$Pais=="Sudán",'Pais']= "Sudan"
+p2011[p2011$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2011[p2011$Pais=="Túnez",'Pais']= "Tunez"
+p2011[p2011$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2011[p2011$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2011[p2011$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2011[p2011$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2011)=NULL
+```
+
+
+
+AÑO 2012
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2012
+
+library(htmltab)
+link2012= 'https://datosmacro.expansion.com/estado/gasto?anio=2012'
+linkpath2012='//*[@id="tb1"]'
+p2012 = htmltab(doc =  link2012,
+                      which = linkpath2012)
+         
+```
+
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,7,8,9
+p2012[,c(2,3,4,5,7,8,9)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2012)[1]= 'Pais'
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2012)[2]= 'GP2012'
+```
+
+
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA COLUMNA DOS
+p2012$`GP2012` = gsub("\\%", "", p2012$`GP2012`)
+p2012$`GP2012` = gsub("\\,", ".", p2012$`GP2012`)
+```
+
+```{r}
+
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2012$`Pais` = gsub("\\[+]", " ", p2012$`Pais`)
+p2012$`Pais` = gsub("\\+", "", p2012$`Pais`)
+p2012$`Pais` = gsub("\\[", "", p2012$`Pais`)
+p2012$`Pais` = gsub("\\]", "", p2012$`Pais`)
+```
+
+```{r}
+#NOS QUEDAMOS CON LAS CASOS COMPLETOS
+p2012 = p2012[complete.cases(p2012),]
+```
+
+
+```{r}
+#SE CONVIERTIRÁN LOS DATOS DE LA COLUMNA DOS A NUMÉRICOS
+
+p2012$`GP2012`=as.numeric(p2012$`GP2012`)
+```
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2012)= NULL
+```
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2012=p2012[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2012$Pais=gsub(' ',"",p2012$Pais)
+str(p2012)
+
+p2012[p2012$Pais=="Benín",'Pais']="Benin"
+p2012[p2012$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2012[p2012$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2012[p2012$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2012[p2012$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2012[p2012$Pais=="Camerún",'Pais']= "Camerun"
+p2012[p2012$Pais=="Etiopía",'Pais']= "Etiopia"
+p2012[p2012$Pais=="Gabón",'Pais']= "Gabon"
+p2012[p2012$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2012[p2012$Pais=="Malí",'Pais']= "Mali"
+p2012[p2012$Pais=="Níger",'Pais']= "Niger"
+p2012[p2012$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2012[p2012$Pais=="Sudán",'Pais']= "Sudan"
+p2012[p2012$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2012[p2012$Pais=="Túnez",'Pais']= "Tunez"
+p2012[p2012$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2012[p2012$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2012[p2012$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2012[p2012$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2012)=NULL
+
+```
+
+AÑO 2013
+
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2013
+library(htmltab)
+link2013= 'https://datosmacro.expansion.com/estado/gasto?anio=2013'
+linkpath2013='//*[@id="node-10595"]/div[4]/div/div[2]'
+p2013 = htmltab(doc =  link2013,
+                      which = linkpath2013)
+```
+
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,7,8,9
+p2013[,c(2,3,4,5,7,8,9)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2013)[1]= 'Pais'
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2013)[2]= 'GP2013'
+```
+
+
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA COLUMNA DOS 
+ p2013$`GP2013` = gsub("\\%", "", p2013$`GP2013`)
+
+ p2013$`GP2013` = gsub("\\,", ".", p2013$`GP2013`)
+```
+
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2013$`Pais` = gsub("\\[+]", " ", p2013$`Pais`)
+
+p2013$`Pais` = gsub("\\+", "", p2013$`Pais`)
+
+p2013$`Pais` = gsub("\\[", "", p2013$`Pais`)
+
+p2013$`Pais` = gsub("\\]", "", p2013$`Pais`)
+```
+
+```{r}
+#SE PROCEDE A QUEDARSE CON LOS CASOS COMPLETOS
+p2013 = p2013[complete.cases(p2013),]
+```
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2013$`GP2013`=as.numeric(p2013$`GP2013`)
+```
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2013)= NULL
+```
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2013=p2013[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2013$Pais=gsub(' ',"",p2013$Pais)
+str(p2013)
+
+p2013[p2013$Pais=="Benín",'Pais']="Benin"
+p2013[p2013$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2013[p2013$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2013[p2013$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2013[p2013$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2013[p2013$Pais=="Camerún",'Pais']= "Camerun"
+p2013[p2013$Pais=="Etiopía",'Pais']= "Etiopia"
+p2013[p2013$Pais=="Gabón",'Pais']= "Gabon"
+p2013[p2013$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2013[p2013$Pais=="Malí",'Pais']= "Mali"
+p2013[p2013$Pais=="Níger",'Pais']= "Niger"
+p2013[p2013$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2013[p2013$Pais=="Sudán",'Pais']= "Sudan"
+p2013[p2013$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2013[p2013$Pais=="Túnez",'Pais']= "Tunez"
+p2013[p2013$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2013[p2013$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2013[p2013$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2013[p2013$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2013)=NULL
+```
+
+AÑO 2014
+
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2014
+library(htmltab)
+link2014= 'https://datosmacro.expansion.com/estado/gasto?anio=2014'
+linkpath2014='//*[@id="tb1"]'
+p2014 = htmltab(doc =  link2014,
+                      which = linkpath2014)
+         
+```
+
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,7,8,9
+p2014[,c(2,3,4,5,7,8,9)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2014)[1]= 'Pais'
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2014)[2]= 'GP2014'
+```
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA DE LA COLUMNA DOS
+ p2014$`GP2014` = gsub("\\%", "", p2014$`GP2014`)
+ p2014$`GP2014` = gsub("\\,", ".", p2014$`GP2014`)
+```
+
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2014$`Pais` = gsub("\\[+]", " ", p2014$`Pais`)
+
+p2014$`Pais` = gsub("\\+", "", p2014$`Pais`)
+
+p2014$`Pais` = gsub("\\[", "", p2014$`Pais`)
+
+p2014$`Pais` = gsub("\\]", "", p2014$`Pais`)
+```
+
+```{r}
+#SE PROCEDE A QUEDARSE CON LOS CASOS COMPLETOS
+p2014 = p2014[complete.cases(p2014),]
+```
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2014$`GP2014`=as.numeric(p2014$`GP2014`)
+```
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES
+row.names(p2014)= NULL
+```
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2014=p2014[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2014$Pais=gsub(' ',"",p2014$Pais)
+str(p2014)
+
+p2014[p2014$Pais=="Benín",'Pais']="Benin"
+p2014[p2014$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2014[p2014$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2014[p2014$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2014[p2014$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2014[p2014$Pais=="Camerún",'Pais']= "Camerun"
+p2014[p2014$Pais=="Etiopía",'Pais']= "Etiopia"
+p2014[p2014$Pais=="Gabón",'Pais']= "Gabon"
+p2014[p2014$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2014[p2014$Pais=="Malí",'Pais']= "Mali"
+p2014[p2014$Pais=="Níger",'Pais']= "Niger"
+p2014[p2014$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2014[p2014$Pais=="Sudán",'Pais']= "Sudan"
+p2014[p2014$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2014[p2014$Pais=="Túnez",'Pais']= "Tunez"
+p2014[p2014$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2014[p2014$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2014[p2014$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2014[p2014$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2014)=NULL
+```
+
+AÑO 2015
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2015
+library(htmltab)
+link2015= 'https://datosmacro.expansion.com/estado/gasto?anio=2015'
+linkpath2015='//*[@id="tb1"]'
+p2015 = htmltab(doc =  link2015,
+                      which = linkpath2015)
+         
+```
+
+
+```{r}
+#ELIMINAMOS LAS COLUMNAS 2,3,4,5,7,8,9
+p2015[,c(2,3,4,5,7,8,9)]=NULL
+```
+
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2015)[1]= 'Pais'
+```
+
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2015)[2]= 'GP2015'
+```
+
+
+```{r}
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA DE LA COLUMNA DOS
+p2015$`GP2015` = gsub("\\%", "", p2015$`GP2015`)
+p2015$`GP2015` = gsub("\\,", ".", p2015$`GP2015`)
+```
+
+
+```{r}
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2015$`Pais` = gsub("\\[+]", " ", p2015$`Pais`)
+p2015$`Pais` = gsub("\\+", "", p2015$`Pais`)
+p2015$`Pais` = gsub("\\[", "", p2015$`Pais`)
+p2015$`Pais` = gsub("\\]", "", p2015$`Pais`)
+```
+
+
+
+```{r}
+#SE PROCEDE A QUEDARSE CON LOS CASOS COMPLETOS
+p2015 = p2015[complete.cases(p2015),]
+```
+
+
+
+```{r}
+#EN ESTE PASO, SE CONVERTIRÁN LOS DATOS DE LA COLUMNA 2 A NUMÉRICA
+p2015$`GP2015`=as.numeric(p2015$`GP2015`)
+```
+
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2015)= NULL
+```
+
+
+```{r}
+#SE SELECCIONAN LOS PAÍSES QUE DESEAMOS
+p2015=p2015[c(15,24,27,28,34,38,39,40,42,44,47,50,54,57,58,59,63,66,67,68,69,72,87,91,100,101,105,106,109,112,115,117,119,122,123,124,125,145,148,149,154,156,158,161,162,163,168,173,175,184,185),]
+```
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+p2015$Pais=gsub(' ',"",p2015$Pais)
+str(p2015)
+
+p2015[p2015$Pais=="Benín",'Pais']="Benin"
+p2015[p2015$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2015[p2015$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2015[p2015$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2015[p2015$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2015[p2015$Pais=="Camerún",'Pais']= "Camerun"
+p2015[p2015$Pais=="Etiopía",'Pais']= "Etiopia"
+p2015[p2015$Pais=="Gabón",'Pais']= "Gabon"
+p2015[p2015$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2015[p2015$Pais=="Malí",'Pais']= "Mali"
+p2015[p2015$Pais=="Níger",'Pais']= "Niger"
+p2015[p2015$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2015[p2015$Pais=="Sudán",'Pais']= "Sudan"
+p2015[p2015$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2015[p2015$Pais=="Túnez",'Pais']= "Tunez"
+p2015[p2015$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2015[p2015$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2015[p2015$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2015[p2015$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+```
+
+
+```{r}
+#AQUI REORDENO LA COLUMNA DE LAS POSICIONES DE LOS PAÍSES 
+row.names(p2015)=NULL
+```
+
+
+AHORA JUNTAR TODO
+
+
+
+```{r}
+#EN ESTE PASO SE UTILIZA CBIND PARA UNIR TODAS LAS COLUMNAS EN UN SOLO DATAFRAME
+invpublica=cbind(p2008,p2009,p2010,p2011,p2012,p2013,p2014,p2015)
+```
+
+```{r}
+names(invpublica)
+```
+
+```{r}
+#EN ESTE CASO SE BORRAN LAS COLUMNAS ESPECÍFICAS
+
+invpublica[,c(3,5,7,9,11,13,15)]=NULL
+```
+
+
+```{r}
+#SE VISUALIZARÁ LA ESTRUCTURA DE LA INVERSIÓN PÚBLICA
+str(invpublica)
+```
+
+```{r}
+#SE PROCEDERÁ A SACAR LA MEDIA DE CADA PAÍS CON SU RESPECTIVOS AÑOS
+invpublica$INVERPUBLICA = rowMeans(invpublica[,2:9], na.rm = TRUE)
+
+invpublica[,2:9]=NULL
+invprivada[,2:9]=NULL
+```
+
+```{r}
+#SE VERIFICA QUE LA DATA  DE INVERSIÓN PÚBLICA ESTÉ LIMPIA
+str(invpublica)
+```
+```{r}
+#SE VERIFICA QUE LA DATA DE INVERSIÓN PRIVADA ESTE LIMPIA
+str(invprivada)
+```
+
+
+
