@@ -1,0 +1,67 @@
+1.2 Variable independiente: Corrupción
+
+```{r}
+#Subo mi data
+link1 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2008.xlsx'
+link2 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2009.xlsx'
+link3 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2010.xlsx'
+link4 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2011.xlsx'
+link5 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2012.xlsx'
+link6 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2013%20y%202015.xlsx'
+d2008 = import(link1)
+d2009 = import(link2)
+d2010 = import(link3)
+d2011 = import(link4)
+d2012 = import(link5)
+d2013a2015 = import(link6)
+```
+```{r}
+#Elimino una fila innecesaria
+d2013a2015$...1 = NULL
+```
+
+```{r}
+#Aplico cbind para unir la data de cada año
+Corrup=cbind(d2008,d2009,d2010,d2011,d2012,d2013a2015)
+#Me quedo sólo con una fila de países y las restantes de los años 2008-2015
+Corrupción = Corrup[,c(1,2,4,6,8,10,12,13,14)]
+#Saco un promedio de esos años y formo la columna "Corrupcion"
+Corrupción$'Corrupcion' = apply(Corrupción[ ,c(2:7)], 1, mean, na.rm = TRUE)
+```
+
+```{r}
+#Elimino los espacios en los nombres de los países
+Corrupción$Pais=trimws(Corrupción$Pais,whitespace = "[\\h\\v]")
+#Cambio el nombre de los países (Inglés a español)
+Corrupción[Corrupción$Pais=="Santo Tomé y Príncipe",'Pais']="Santo Tome y Principe"
+Corrupción[Corrupción$Pais=="Burkina Faso",'Pais']="Burkina Faso"
+Corrupción[Corrupción$Pais=="República Democrática del Congo",'Pais']= "Republica Democratica del Congo"
+Corrupción[Corrupción$Pais=="República Centroafricana",'Pais']= "Republica Centroafricana"
+Corrupción[Corrupción$Pais=="República del Congo",'Pais']= "Republica del Congo"
+Corrupción[Corrupción$Pais=="Camerún",'Pais']= "Camerun"
+Corrupción[Corrupción$Pais=="Etiopía",'Pais']= "Etiopia"
+Corrupción[Corrupción$Pais=="Gabón",'Pais']= "Gabon"
+Corrupción[Corrupción$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+Corrupción[Corrupción$Pais=="Malí",'Pais']= "Mali"
+Corrupción[Corrupción$Pais=="Níger",'Pais']= "Niger"
+Corrupción[Corrupción$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+Corrupción[Corrupción$Pais=="Sudán",'Pais']= "Sudan"
+Corrupción[Corrupción$Pais=="Santo Tomé y Príncipe",'Pais']= "Santo Tome y Principe "
+Corrupción[Corrupción$Pais=="Túnez",'Pais']= "Tunez"
+Corrupción[Corrupción$Pais=="Sierra Leona",'Pais']= "Sierra Leona"
+Corrupción[Corrupción$Pais=="Cabo Verde",'Pais']= "Cabo Verde"
+Corrupción[Corrupción$Pais=="Costa de Marfil",'Pais']= "Costa de Marfil"
+Corrupción[Corrupción$Pais=="Guinea Ecuatorial",'Pais']= "Guinea ecuatorial"
+Corrupción[Corrupción$Pais=="Benín",'Pais']= "Benin"
+Corrupción[Corrupción$Pais=="Baréin",'Pais']= "Barein"
+Corrupción[Corrupción$Pais=="Sudán del Sur",'Pais']= "Sudan del Sur"
+```
+
+```{r}
+#Ordeno los países alfabéticamente
+Corrupción = Corrupción[with(Corrupción, order(Corrupción$Pais)),]
+#Me quedo sólo con la columna de promedio
+Corrupción[,2:9]=NULL
+#Verifico mi limpieza
+str(Corrupción)
+```
