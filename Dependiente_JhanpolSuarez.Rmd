@@ -1,0 +1,213 @@
+1.1 Dependiente: Tasa de nuevos infectados
+```{r}
+#VARIABLE DEPENDIENTE
+
+#Importo mi data
+set.seed(2019)
+library(rio)
+link="https://github.com/JhanpolS/variableindep/raw/master/Dependiente%20OFICIAL.xlsx"
+dependiente=import(link)
+
+#Elimino filas y columnas que no pertenecen al continente africano o que no aportan, respectivamente.
+
+dependiente=dependiente[-(67:71),]
+dependiente=dependiente[-(3),]
+dependiente$`Series Code`=NULL
+dependiente$`Country Code`=NULL
+dependiente$`Series Name`=NULL
+str(dependiente)
+
+row.names(dependiente)=NULL
+
+#convirtiendo a numerica
+
+
+dependiente[,c(2:9)]=lapply(dependiente[,c(2:9)], as.numeric)
+
+#Imputo datos
+
+dependiente[is.na(dependiente$`2008 [YR2008]`),"2008 [YR2008]"]=mean(dependiente$`2008 [YR2008]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2009 [YR2009]`),"2009 [YR2009]"]=mean(dependiente$`2009 [YR2009]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2010 [YR2010]`),"2010 [YR2010]"]=mean(dependiente$`2010 [YR2010]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2011 [YR2011]`),"2011 [YR2011]"]=mean(dependiente$`2011 [YR2011]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2012 [YR2012]`),"2012 [YR2012]"]=mean(dependiente$`2012 [YR2012]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2013 [YR2013]`),"2013 [YR2013]"]=mean(dependiente$`2013 [YR2013]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2014 [YR2014]`),"2014 [YR2014]"]=mean(dependiente$`2014 [YR2014]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2015 [YR2015]`),"2015 [YR2015]"]=mean(dependiente$`2015 [YR2015]`, na.rm=T)
+
+
+#Sacamos la media de nuevas personas infectadas con VIH (2008-2015)
+
+#dependiente$TASANUEVOSIFECTADOS = rowMeans(dependiente[,2:9], na.rm = TRUE)
+#Nos quedamos sólo con el promedio
+#dependiente[,2:9]=NULL
+#Eliminamos países que no pertenecen al continente africano
+dependiente=dependiente[-c(26,27,28,29,31,32,39,47,48,51,57,63),]
+
+```
+
+
+```{r}
+#CAMBIO LOS NOMBRES DE LOS PAÍSES A ESPAÑOL
+names(dependiente)[names(dependiente)=="Country Name"]="Pais"
+
+dependiente[dependiente$`Pais`=="Botswana",'Pais']="Botsuana"
+dependiente[dependiente$`Pais`=="Algeria",'Pais']="Argelia"
+dependiente[dependiente$`Pais`=="Cameroon",'Pais']="Camerun"
+dependiente[dependiente$`Pais`=="Central African Republic",'Pais']="Republica Centroafricana"
+dependiente[dependiente$`Pais`=="Comoros",'Pais']="Comoras"
+dependiente[dependiente$`Pais`=="Congo, Dem. Rep.",'Pais']="Republica Democratica del Congo"
+dependiente[dependiente$`Pais`=="Congo, Rep.",'Pais']="Republica del Congo"
+dependiente[dependiente$`Pais`=="Cote d'Ivoire",'Pais']="Costa de Marfil"
+dependiente[dependiente$`Pais`=="Djibouti",'Pais']="Yibuti"
+dependiente[dependiente$`Pais`=="Egypt, Arab Rep.",'Pais']="Egipto"
+dependiente[dependiente$`Pais`=="Equatorial Guinea",'Pais']="Guinea Ecuatorial"
+dependiente[dependiente$`Pais`=="Eswatini",'Pais']="Suazilandia"
+dependiente[dependiente$`Pais`=="Ethiopia",'Pais']="Etiopia"
+dependiente[dependiente$`Pais`=="Gambia, The",'Pais']="Gambia"
+dependiente[dependiente$`Pais`=="Guinea-Bissau",'Pais']="Guinea Bisau"
+dependiente[dependiente$`Pais`=="Kenya",'Pais']="Kenia"
+dependiente[dependiente$`Pais`=="Lesotho",'Pais']="Lesoto"
+dependiente[dependiente$`Pais`=="Libya",'Pais']="Libia"
+dependiente[dependiente$`Pais`=="Mauritius",'Pais']="Mauricio"
+dependiente[dependiente$`Pais`=="Morocco",'Pais']="Marruecos"
+dependiente[dependiente$`Pais`=="Rwanda",'Pais']="Ruanda"
+dependiente[dependiente$`Pais`=="Sao Tome and Principe",'Pais']="Santo Tome y Principe"
+dependiente[dependiente$`Pais`=="Sierra Leone",'Pais']="Sierra Leona"
+dependiente[dependiente$`Pais`=="Tunisia",'Pais']="Tunez"
+dependiente[dependiente$`Pais`=="Zimbabwe",'Pais']="Zimbabue"
+dependiente[dependiente$`Pais`=="Malawi",'Pais']="Malaui"
+dependiente[dependiente$`Pais`=="Guinea Ecuatorial",'Pais']="Guinea ecuatorial"
+dependiente[dependiente$`Pais`=="South Africa",'Pais']="Sudafrica"
+```
+
+```{r}
+dependiente=dependiente[,-c(3:8)]
+dependiente$RESTA= dependiente$`2015 [YR2015]`-dependiente$`2008 [YR2008]`
+dependiente$TasadevariacionVIH[1]=dependiente$RESTA[1]/dependiente$`2015 [YR2015]`[1]
+
+
+dependiente$TasadevariacionVIH[2]=dependiente$RESTA[2]/dependiente$`2015 [YR2015]`[2]
+
+dependiente$TasadevariacionVIH[3]=dependiente$RESTA[3]/dependiente$`2015 [YR2015]`[3]
+
+dependiente$TasadevariacionVIH[4]=dependiente$RESTA[4]/dependiente$`2015 [YR2015]`[4]
+
+dependiente$TasadevariacionVIH[5]=dependiente$RESTA[5]/dependiente$`2015 [YR2015]`[5]
+
+dependiente$TasadevariacionVIH[6]=dependiente$RESTA[6]/dependiente$`2015 [YR2015]`[6]
+
+dependiente$TasadevariacionVIH[7]=dependiente$RESTA[7]/dependiente$`2015 [YR2015]`[7]
+
+dependiente$TasadevariacionVIH[8]=dependiente$RESTA[8]/dependiente$`2015 [YR2015]`[8]
+
+dependiente$TasadevariacionVIH[9]=dependiente$RESTA[9]/dependiente$`2015 [YR2015]`[9]
+
+dependiente$TasadevariacionVIH[10]=dependiente$RESTA[10]/dependiente$`2015 [YR2015]`[10]
+
+dependiente$TasadevariacionVIH[11]=dependiente$RESTA[11]/dependiente$`2015 [YR2015]`[11]
+
+dependiente$TasadevariacionVIH[12]=dependiente$RESTA[12]/dependiente$`2015 [YR2015]`[12]
+
+dependiente$TasadevariacionVIH[13]=dependiente$RESTA[13]/dependiente$`2015 [YR2015]`[13]
+
+dependiente$TasadevariacionVIH[14]=dependiente$RESTA[14]/dependiente$`2015 [YR2015]`[14]
+
+dependiente$TasadevariacionVIH[15]=dependiente$RESTA[15]/dependiente$`2015 [YR2015]`[15]
+
+dependiente$TasadevariacionVIH[16]=dependiente$RESTA[16]/dependiente$`2015 [YR2015]`[16]
+
+dependiente$TasadevariacionVIH[17]=dependiente$RESTA[17]/dependiente$`2015 [YR2015]`[17]
+
+dependiente$TasadevariacionVIH[18]=dependiente$RESTA[18]/dependiente$`2015 [YR2015]`[18]
+
+dependiente$TasadevariacionVIH[19]=dependiente$RESTA[19]/dependiente$`2015 [YR2015]`[19]
+
+dependiente$TasadevariacionVIH[20]=dependiente$RESTA[20]/dependiente$`2015 [YR2015]`[20]
+
+dependiente$TasadevariacionVIH[21]=dependiente$RESTA[21]/dependiente$`2015 [YR2015]`[21]
+
+dependiente$TasadevariacionVIH[22]=dependiente$RESTA[22]/dependiente$`2015 [YR2015]`[22]
+
+dependiente$TasadevariacionVIH[23]=dependiente$RESTA[23]/dependiente$`2015 [YR2015]`[23]
+
+dependiente$TasadevariacionVIH[24]=dependiente$RESTA[24]/dependiente$`2015 [YR2015]`[24]
+
+dependiente$TasadevariacionVIH[25]=dependiente$RESTA[25]/dependiente$`2015 [YR2015]`[25]
+
+dependiente$TasadevariacionVIH[26]=dependiente$RESTA[26]/dependiente$`2015 [YR2015]`[26]
+
+dependiente$TasadevariacionVIH[27]=dependiente$RESTA[27]/dependiente$`2015 [YR2015]`[27]
+
+dependiente$TasadevariacionVIH[28]=dependiente$RESTA[28]/dependiente$`2015 [YR2015]`[28]
+
+dependiente$TasadevariacionVIH[29]=dependiente$RESTA[29]/dependiente$`2015 [YR2015]`[29]
+
+dependiente$TasadevariacionVIH[30]=dependiente$RESTA[30]/dependiente$`2015 [YR2015]`[30]
+
+dependiente$TasadevariacionVIH[31]=dependiente$RESTA[31]/dependiente$`2015 [YR2015]`[31]
+
+dependiente$TasadevariacionVIH[32]=dependiente$RESTA[32]/dependiente$`2015 [YR2015]`[32]
+
+dependiente$TasadevariacionVIH[33]=dependiente$RESTA[33]/dependiente$`2015 [YR2015]`[33]
+
+dependiente$TasadevariacionVIH[34]=dependiente$RESTA[34]/dependiente$`2015 [YR2015]`[34]
+
+dependiente$TasadevariacionVIH[35]=dependiente$RESTA[35]/dependiente$`2015 [YR2015]`[35]
+
+dependiente$TasadevariacionVIH[36]=dependiente$RESTA[36]/dependiente$`2015 [YR2015]`[36]
+
+dependiente$TasadevariacionVIH[37]=dependiente$RESTA[37]/dependiente$`2015 [YR2015]`[37]
+
+dependiente$TasadevariacionVIH[38]=dependiente$RESTA[38]/dependiente$`2015 [YR2015]`[38]
+
+dependiente$TasadevariacionVIH[39]=dependiente$RESTA[39]/dependiente$`2015 [YR2015]`[39]
+
+
+dependiente$TasadevariacionVIH[40]=dependiente$RESTA[40]/dependiente$`2015 [YR2015]`[40]
+
+dependiente$TasadevariacionVIH[41]=dependiente$RESTA[41]/dependiente$`2015 [YR2015]`[41]
+
+dependiente$TasadevariacionVIH[42]=dependiente$RESTA[42]/dependiente$`2015 [YR2015]`[42]
+
+dependiente$TasadevariacionVIH[43]=dependiente$RESTA[43]/dependiente$`2015 [YR2015]`[43]
+
+dependiente$TasadevariacionVIH[44]=dependiente$RESTA[44]/dependiente$`2015 [YR2015]`[44]
+
+dependiente$TasadevariacionVIH[45]=dependiente$RESTA[45]/dependiente$`2015 [YR2015]`[45]
+
+dependiente$TasadevariacionVIH[46]=dependiente$RESTA[46]/dependiente$`2015 [YR2015]`[46]
+
+dependiente$TasadevariacionVIH[47]=dependiente$RESTA[47]/dependiente$`2015 [YR2015]`[47]
+
+dependiente$TasadevariacionVIH[48]=dependiente$RESTA[48]/dependiente$`2015 [YR2015]`[48]
+
+dependiente$TasadevariacionVIH[49]=dependiente$RESTA[49]/dependiente$`2015 [YR2015]`[49]
+
+dependiente$TasadevariacionVIH[50]=dependiente$RESTA[50]/dependiente$`2015 [YR2015]`[50]
+
+dependiente$TasadevariacionVIH[51]=dependiente$RESTA[51]/dependiente$`2015 [YR2015]`[51]
+
+dependiente$TasadevariacionVIH[52]=dependiente$RESTA[52]/dependiente$`2015 [YR2015]`[52]
+
+dependiente$TasadevariacionVIH[53]=dependiente$RESTA[53]/dependiente$`2015 [YR2015]`[53]
+
+```
+
+
+```{r}
+dependiente=dependiente[,-(2:4)]
+str(dependiente)
+dependiente$TasadevariacionVIH=dependiente$TasadevariacionVIH*100
+dependiente$TasadevariacionVIH=round(dependiente$TasadevariacionVIH,2)
+
+row.names(dependiente)=dependiente$Pais
+```
+
