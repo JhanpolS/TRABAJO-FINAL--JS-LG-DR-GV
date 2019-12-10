@@ -1,0 +1,1497 @@
+1)LIMPIEZA DE DATAS
+
+
+1.1 Dependiente: Tasa de nuevos infectados
+```{r}
+#VARIABLE DEPENDIENTE
+
+#Importo mi data
+set.seed(2019)
+library(rio)
+link="https://github.com/JhanpolS/variableindep/raw/master/Dependiente%20OFICIAL.xlsx"
+dependiente=import(link)
+
+#Elimino filas y columnas que no pertenecen al continente africano o que no aportan, respectivamente.
+
+dependiente=dependiente[-(67:71),]
+dependiente=dependiente[-(3),]
+dependiente$`Series Code`=NULL
+dependiente$`Country Code`=NULL
+dependiente$`Series Name`=NULL
+str(dependiente)
+
+row.names(dependiente)=NULL
+
+#convirtiendo a numerica
+
+
+dependiente[,c(2:9)]=lapply(dependiente[,c(2:9)], as.numeric)
+
+#Imputo datos
+
+dependiente[is.na(dependiente$`2008 [YR2008]`),"2008 [YR2008]"]=mean(dependiente$`2008 [YR2008]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2009 [YR2009]`),"2009 [YR2009]"]=mean(dependiente$`2009 [YR2009]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2010 [YR2010]`),"2010 [YR2010]"]=mean(dependiente$`2010 [YR2010]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2011 [YR2011]`),"2011 [YR2011]"]=mean(dependiente$`2011 [YR2011]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2012 [YR2012]`),"2012 [YR2012]"]=mean(dependiente$`2012 [YR2012]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2013 [YR2013]`),"2013 [YR2013]"]=mean(dependiente$`2013 [YR2013]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2014 [YR2014]`),"2014 [YR2014]"]=mean(dependiente$`2014 [YR2014]`, na.rm=T)
+
+dependiente[is.na(dependiente$`2015 [YR2015]`),"2015 [YR2015]"]=mean(dependiente$`2015 [YR2015]`, na.rm=T)
+
+
+#Sacamos la media de nuevas personas infectadas con VIH (2008-2015)
+
+#dependiente$TASANUEVOSIFECTADOS = rowMeans(dependiente[,2:9], na.rm = TRUE)
+#Nos quedamos sólo con el promedio
+#dependiente[,2:9]=NULL
+#Eliminamos países que no pertenecen al continente africano
+dependiente=dependiente[-c(26,27,28,29,31,32,39,47,48,51,57,63),]
+
+```
+
+
+```{r}
+#CAMBIO LOS NOMBRES DE LOS PAÍSES A ESPAÑOL
+names(dependiente)[names(dependiente)=="Country Name"]="Pais"
+
+dependiente[dependiente$`Pais`=="Botswana",'Pais']="Botsuana"
+dependiente[dependiente$`Pais`=="Algeria",'Pais']="Argelia"
+dependiente[dependiente$`Pais`=="Cameroon",'Pais']="Camerun"
+dependiente[dependiente$`Pais`=="Central African Republic",'Pais']="Republica Centroafricana"
+dependiente[dependiente$`Pais`=="Comoros",'Pais']="Comoras"
+dependiente[dependiente$`Pais`=="Congo, Dem. Rep.",'Pais']="Republica Democratica del Congo"
+dependiente[dependiente$`Pais`=="Congo, Rep.",'Pais']="Republica del Congo"
+dependiente[dependiente$`Pais`=="Cote d'Ivoire",'Pais']="Costa de Marfil"
+dependiente[dependiente$`Pais`=="Djibouti",'Pais']="Yibuti"
+dependiente[dependiente$`Pais`=="Egypt, Arab Rep.",'Pais']="Egipto"
+dependiente[dependiente$`Pais`=="Equatorial Guinea",'Pais']="Guinea Ecuatorial"
+dependiente[dependiente$`Pais`=="Eswatini",'Pais']="Suazilandia"
+dependiente[dependiente$`Pais`=="Ethiopia",'Pais']="Etiopia"
+dependiente[dependiente$`Pais`=="Gambia, The",'Pais']="Gambia"
+dependiente[dependiente$`Pais`=="Guinea-Bissau",'Pais']="Guinea Bisau"
+dependiente[dependiente$`Pais`=="Kenya",'Pais']="Kenia"
+dependiente[dependiente$`Pais`=="Lesotho",'Pais']="Lesoto"
+dependiente[dependiente$`Pais`=="Libya",'Pais']="Libia"
+dependiente[dependiente$`Pais`=="Mauritius",'Pais']="Mauricio"
+dependiente[dependiente$`Pais`=="Morocco",'Pais']="Marruecos"
+dependiente[dependiente$`Pais`=="Rwanda",'Pais']="Ruanda"
+dependiente[dependiente$`Pais`=="Sao Tome and Principe",'Pais']="Santo Tome y Principe"
+dependiente[dependiente$`Pais`=="Sierra Leone",'Pais']="Sierra Leona"
+dependiente[dependiente$`Pais`=="Tunisia",'Pais']="Tunez"
+dependiente[dependiente$`Pais`=="Zimbabwe",'Pais']="Zimbabue"
+dependiente[dependiente$`Pais`=="Malawi",'Pais']="Malaui"
+dependiente[dependiente$`Pais`=="Guinea Ecuatorial",'Pais']="Guinea ecuatorial"
+dependiente[dependiente$`Pais`=="South Africa",'Pais']="Sudafrica"
+```
+
+```{r}
+dependiente=dependiente[,-c(3:8)]
+dependiente$RESTA= dependiente$`2015 [YR2015]`-dependiente$`2008 [YR2008]`
+dependiente$TasadevariacionVIH[1]=dependiente$RESTA[1]/dependiente$`2015 [YR2015]`[1]
+
+
+dependiente$TasadevariacionVIH[2]=dependiente$RESTA[2]/dependiente$`2015 [YR2015]`[2]
+
+dependiente$TasadevariacionVIH[3]=dependiente$RESTA[3]/dependiente$`2015 [YR2015]`[3]
+
+dependiente$TasadevariacionVIH[4]=dependiente$RESTA[4]/dependiente$`2015 [YR2015]`[4]
+
+dependiente$TasadevariacionVIH[5]=dependiente$RESTA[5]/dependiente$`2015 [YR2015]`[5]
+
+dependiente$TasadevariacionVIH[6]=dependiente$RESTA[6]/dependiente$`2015 [YR2015]`[6]
+
+dependiente$TasadevariacionVIH[7]=dependiente$RESTA[7]/dependiente$`2015 [YR2015]`[7]
+
+dependiente$TasadevariacionVIH[8]=dependiente$RESTA[8]/dependiente$`2015 [YR2015]`[8]
+
+dependiente$TasadevariacionVIH[9]=dependiente$RESTA[9]/dependiente$`2015 [YR2015]`[9]
+
+dependiente$TasadevariacionVIH[10]=dependiente$RESTA[10]/dependiente$`2015 [YR2015]`[10]
+
+dependiente$TasadevariacionVIH[11]=dependiente$RESTA[11]/dependiente$`2015 [YR2015]`[11]
+
+dependiente$TasadevariacionVIH[12]=dependiente$RESTA[12]/dependiente$`2015 [YR2015]`[12]
+
+dependiente$TasadevariacionVIH[13]=dependiente$RESTA[13]/dependiente$`2015 [YR2015]`[13]
+
+dependiente$TasadevariacionVIH[14]=dependiente$RESTA[14]/dependiente$`2015 [YR2015]`[14]
+
+dependiente$TasadevariacionVIH[15]=dependiente$RESTA[15]/dependiente$`2015 [YR2015]`[15]
+
+dependiente$TasadevariacionVIH[16]=dependiente$RESTA[16]/dependiente$`2015 [YR2015]`[16]
+
+dependiente$TasadevariacionVIH[17]=dependiente$RESTA[17]/dependiente$`2015 [YR2015]`[17]
+
+dependiente$TasadevariacionVIH[18]=dependiente$RESTA[18]/dependiente$`2015 [YR2015]`[18]
+
+dependiente$TasadevariacionVIH[19]=dependiente$RESTA[19]/dependiente$`2015 [YR2015]`[19]
+
+dependiente$TasadevariacionVIH[20]=dependiente$RESTA[20]/dependiente$`2015 [YR2015]`[20]
+
+dependiente$TasadevariacionVIH[21]=dependiente$RESTA[21]/dependiente$`2015 [YR2015]`[21]
+
+dependiente$TasadevariacionVIH[22]=dependiente$RESTA[22]/dependiente$`2015 [YR2015]`[22]
+
+dependiente$TasadevariacionVIH[23]=dependiente$RESTA[23]/dependiente$`2015 [YR2015]`[23]
+
+dependiente$TasadevariacionVIH[24]=dependiente$RESTA[24]/dependiente$`2015 [YR2015]`[24]
+
+dependiente$TasadevariacionVIH[25]=dependiente$RESTA[25]/dependiente$`2015 [YR2015]`[25]
+
+dependiente$TasadevariacionVIH[26]=dependiente$RESTA[26]/dependiente$`2015 [YR2015]`[26]
+
+dependiente$TasadevariacionVIH[27]=dependiente$RESTA[27]/dependiente$`2015 [YR2015]`[27]
+
+dependiente$TasadevariacionVIH[28]=dependiente$RESTA[28]/dependiente$`2015 [YR2015]`[28]
+
+dependiente$TasadevariacionVIH[29]=dependiente$RESTA[29]/dependiente$`2015 [YR2015]`[29]
+
+dependiente$TasadevariacionVIH[30]=dependiente$RESTA[30]/dependiente$`2015 [YR2015]`[30]
+
+dependiente$TasadevariacionVIH[31]=dependiente$RESTA[31]/dependiente$`2015 [YR2015]`[31]
+
+dependiente$TasadevariacionVIH[32]=dependiente$RESTA[32]/dependiente$`2015 [YR2015]`[32]
+
+dependiente$TasadevariacionVIH[33]=dependiente$RESTA[33]/dependiente$`2015 [YR2015]`[33]
+
+dependiente$TasadevariacionVIH[34]=dependiente$RESTA[34]/dependiente$`2015 [YR2015]`[34]
+
+dependiente$TasadevariacionVIH[35]=dependiente$RESTA[35]/dependiente$`2015 [YR2015]`[35]
+
+dependiente$TasadevariacionVIH[36]=dependiente$RESTA[36]/dependiente$`2015 [YR2015]`[36]
+
+dependiente$TasadevariacionVIH[37]=dependiente$RESTA[37]/dependiente$`2015 [YR2015]`[37]
+
+dependiente$TasadevariacionVIH[38]=dependiente$RESTA[38]/dependiente$`2015 [YR2015]`[38]
+
+dependiente$TasadevariacionVIH[39]=dependiente$RESTA[39]/dependiente$`2015 [YR2015]`[39]
+
+
+dependiente$TasadevariacionVIH[40]=dependiente$RESTA[40]/dependiente$`2015 [YR2015]`[40]
+
+dependiente$TasadevariacionVIH[41]=dependiente$RESTA[41]/dependiente$`2015 [YR2015]`[41]
+
+dependiente$TasadevariacionVIH[42]=dependiente$RESTA[42]/dependiente$`2015 [YR2015]`[42]
+
+dependiente$TasadevariacionVIH[43]=dependiente$RESTA[43]/dependiente$`2015 [YR2015]`[43]
+
+dependiente$TasadevariacionVIH[44]=dependiente$RESTA[44]/dependiente$`2015 [YR2015]`[44]
+
+dependiente$TasadevariacionVIH[45]=dependiente$RESTA[45]/dependiente$`2015 [YR2015]`[45]
+
+dependiente$TasadevariacionVIH[46]=dependiente$RESTA[46]/dependiente$`2015 [YR2015]`[46]
+
+dependiente$TasadevariacionVIH[47]=dependiente$RESTA[47]/dependiente$`2015 [YR2015]`[47]
+
+dependiente$TasadevariacionVIH[48]=dependiente$RESTA[48]/dependiente$`2015 [YR2015]`[48]
+
+dependiente$TasadevariacionVIH[49]=dependiente$RESTA[49]/dependiente$`2015 [YR2015]`[49]
+
+dependiente$TasadevariacionVIH[50]=dependiente$RESTA[50]/dependiente$`2015 [YR2015]`[50]
+
+dependiente$TasadevariacionVIH[51]=dependiente$RESTA[51]/dependiente$`2015 [YR2015]`[51]
+
+dependiente$TasadevariacionVIH[52]=dependiente$RESTA[52]/dependiente$`2015 [YR2015]`[52]
+
+dependiente$TasadevariacionVIH[53]=dependiente$RESTA[53]/dependiente$`2015 [YR2015]`[53]
+
+```
+
+
+```{r}
+dependiente=dependiente[,-(2:4)]
+str(dependiente)
+dependiente$TasadevariacionVIH=dependiente$TasadevariacionVIH*100
+dependiente$TasadevariacionVIH=round(dependiente$TasadevariacionVIH,2)
+
+row.names(dependiente)=dependiente$Pais
+```
+
+1.2 Variable independiente: Corrupción
+
+```{r}
+#Subo mi data
+link1 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2008.xlsx'
+link2 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2009.xlsx'
+link3 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2010.xlsx'
+link4 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2011.xlsx'
+link5 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2012.xlsx'
+link6 = 'https://github.com/DiegoRojasNurena/drojas/raw/master/2013%20y%202015.xlsx'
+d2008 = import(link1)
+d2009 = import(link2)
+d2010 = import(link3)
+d2011 = import(link4)
+d2012 = import(link5)
+d2013a2015 = import(link6)
+```
+```{r}
+#Elimino una fila innecesaria
+d2013a2015$...1 = NULL
+```
+
+```{r}
+#Aplico cbind para unir la data de cada año
+Corrup=cbind(d2008,d2009,d2010,d2011,d2012,d2013a2015)
+#Me quedo sólo con una fila de países y las restantes de los años 2008-2015
+Corrupción = Corrup[,c(1,2,4,6,8,10,12,13,14)]
+#Saco un promedio de esos años y formo la columna "Corrupcion"
+Corrupción$'Corrupcion' = apply(Corrupción[ ,c(2:7)], 1, mean, na.rm = TRUE)
+```
+
+```{r}
+#Elimino los espacios en los nombres de los países
+Corrupción$Pais=trimws(Corrupción$Pais,whitespace = "[\\h\\v]")
+#Cambio el nombre de los países (Inglés a español)
+Corrupción[Corrupción$Pais=="Santo Tomé y Príncipe",'Pais']="Santo Tome y Principe"
+Corrupción[Corrupción$Pais=="Burkina Faso",'Pais']="Burkina Faso"
+Corrupción[Corrupción$Pais=="República Democrática del Congo",'Pais']= "Republica Democratica del Congo"
+Corrupción[Corrupción$Pais=="República Centroafricana",'Pais']= "Republica Centroafricana"
+Corrupción[Corrupción$Pais=="República del Congo",'Pais']= "Republica del Congo"
+Corrupción[Corrupción$Pais=="Camerún",'Pais']= "Camerun"
+Corrupción[Corrupción$Pais=="Etiopía",'Pais']= "Etiopia"
+Corrupción[Corrupción$Pais=="Gabón",'Pais']= "Gabon"
+Corrupción[Corrupción$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+Corrupción[Corrupción$Pais=="Malí",'Pais']= "Mali"
+Corrupción[Corrupción$Pais=="Níger",'Pais']= "Niger"
+Corrupción[Corrupción$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+Corrupción[Corrupción$Pais=="Sudán",'Pais']= "Sudan"
+Corrupción[Corrupción$Pais=="Santo Tomé y Príncipe",'Pais']= "Santo Tome y Principe "
+Corrupción[Corrupción$Pais=="Túnez",'Pais']= "Tunez"
+Corrupción[Corrupción$Pais=="Sierra Leona",'Pais']= "Sierra Leona"
+Corrupción[Corrupción$Pais=="Cabo Verde",'Pais']= "Cabo Verde"
+Corrupción[Corrupción$Pais=="Costa de Marfil",'Pais']= "Costa de Marfil"
+Corrupción[Corrupción$Pais=="Guinea Ecuatorial",'Pais']= "Guinea ecuatorial"
+Corrupción[Corrupción$Pais=="Benín",'Pais']= "Benin"
+Corrupción[Corrupción$Pais=="Baréin",'Pais']= "Barein"
+Corrupción[Corrupción$Pais=="Sudán del Sur",'Pais']= "Sudan del Sur"
+```
+
+```{r}
+#Ordeno los países alfabéticamente
+Corrupción = Corrupción[with(Corrupción, order(Corrupción$Pais)),]
+#Me quedo sólo con la columna de promedio
+Corrupción[,2:9]=NULL
+#Verifico mi limpieza
+str(Corrupción)
+```
+1.3 Variable independiente: INVERSIÓN PRIVADA
+Gasto privado privado en salud (PVT-D) como porcentaje del gasto actual en salud (CHE=current health expenditure) (%): La parte del gasto privado interno en salud del gasto total actual en salud indica cuánto es financiado internamente por el sector privado. Los fondos del sector privado provienen de hogares, corporaciones y organizaciones sin fines de lucro. Dichos gastos pueden ser prepagos para un seguro médico voluntario o pagarse directamente a los proveedores de atención médica. Este indicador describe el papel del sector privado en la financiación de la asistencia sanitaria en relación con fuentes públicas o externas
+
+```{r}
+
+#IMPORTAMOS LA DATA DESDE GITHUB
+library(rio)
+data="https://github.com/lguzman08/trabajosestad/raw/master/africa.xlsx"
+invprivada=import(data)
+```
+
+```{r}
+#VISUALIZAMOS EL NÚMERO DE FILAS Y COLUMNAS
+
+dim(invprivada) #filas, columnas
+```
+
+
+```{r}
+#EN ESTE PASO PODREMOS VISUALIZAR LOS NOMBRES DE CADA COLUMNA
+names(invprivada)
+```
+```{r}
+#RECODIFICAMOS LOS NOMBRES DE LA COLUMNAS
+names(invprivada)=c("Pais","2015","2014","2013", "2012", "2011", "2010", "2009", "2008", "2007", "2006", "2005", "2004", "2003", "2002", "2001", "2000")
+```
+
+```{r}
+#Eliminamos filas de años innecesarios
+invprivada=invprivada[,-c(10:17)]
+#CONVERTIMOS DESDE LA COLUMNA 2 HASTA LA 9 EN NUMÉRICAS
+invprivada[,c(2:9)]=lapply(invprivada[,c(2:9)],as.numeric)
+```
+```{r}
+#IMPUTAR
+invprivada[is.na(invprivada$`2015`),"2015"]=mean(invprivada$`2015`, na.rm=T)
+
+invprivada[is.na(invprivada$`2014`),"2014"]=mean(invprivada$`2014`, na.rm=T)
+
+invprivada[is.na(invprivada$`2013`),"2013"]=mean(invprivada$`2013`, na.rm=T)
+
+invprivada[is.na(invprivada$`2012`),"2012"]=mean(invprivada$`2012`, na.rm=T)
+
+invprivada[is.na(invprivada$`2011`),"2011"]=mean(invprivada$`2011`, na.rm=T)
+
+invprivada[is.na(invprivada$`2010`),"2010"]=mean(invprivada$`2010`, na.rm=T)
+
+invprivada[is.na(invprivada$`2009`),"2009"]=mean(invprivada$`2009`, na.rm=T)
+
+invprivada[is.na(invprivada$`2008`),"2008"]=mean(invprivada$`2008`, na.rm=T)
+
+```
+
+```{r}
+#AQUI SE UTILIZA ROW NAMES PARA RESETEAR LA DATA Y ASÍ EMPIECE DE 1
+
+
+#EN ESTE PASO ELIJO LOS PAÍSES QUE DESEO
+invprivada=invprivada[c(193,194,50,5,57,125,60,3,23,64,126,23,33,65,27,28,68,29,31,34,38,42,54,72,73,56,90,97,98,48,39,102,99,144,161,103,150,165,106,162,116,152,185,109,154,155,160,59,119,117,110,174,177,181),]
+```
+
+
+```{r}
+#MODIFICAMOS LOS PAÍSES: DE INGLÉS A ESPAÑOL ASÍ COMO ELIMINAR LAS TILDES
+invprivada[,1]
+invprivada[invprivada$Pais=="Cameroon",'Pais']="Camerun"
+invprivada[invprivada$Pais=="Central African Republic",'Pais']="Republica Centroafricana"
+invprivada[invprivada$Pais=="Comoros",'Pais']="Comoras"
+invprivada[invprivada$Pais=="Côte d'Ivoire",'Pais']="Costa de Marfil"
+invprivada[invprivada$Pais=="Democratic Republic of the Congo",'Pais']="Republica Democratica del Congo"
+invprivada[invprivada$Pais=="Egypt",'Pais']="Egipto"
+invprivada[invprivada$Pais=="Djibouti",'Pais']="Yibuti"
+invprivada[invprivada$Pais=="Ethiopia",'Pais']="Etiopia"
+invprivada[invprivada$Pais=="Kenya",'Pais']="Kenia"
+invprivada[invprivada$Pais=="Guinea-Bissau",'Pais']="Guinea Bisau"
+invprivada[invprivada$Pais=="Lesotho",'Pais']="Lesoto"
+invprivada[invprivada$Pais=="Malawi",'Pais']="Malaui"
+invprivada[invprivada$Pais=="Sao Tome and Principe",'Pais']="Santo Tome y Principe"
+invprivada[invprivada$Pais=="Sierra Leone",'Pais']="Sierra Leona"
+invprivada[invprivada$Pais=="South Africa",'Pais']="Sudafrica"
+invprivada[invprivada$Pais=="United Republic of Tanzania",'Pais']="Tanzania"
+invprivada[invprivada$Pais=="Rwanda",'Pais']="Ruanda"
+invprivada[invprivada$Pais=="Tunisia",'Pais']="Tunez"
+invprivada[invprivada$Pais=="Morocco",'Pais']="Marruecos"
+invprivada[invprivada$Pais=="Mauritius",'Pais']="Mauricio"
+invprivada[invprivada$Pais=="Botswana",'Pais']="Botsuana"
+invprivada[invprivada$Pais=="Algeria",'Pais']="Argelia"
+invprivada[invprivada$Pais=="Congo",'Pais']="Republica del Congo"
+invprivada[invprivada$Pais=="South Sudan",'Pais']="Sudan del Sur"
+invprivada[invprivada$Pais=="Eswatini",'Pais']="Suazilandia"
+invprivada[invprivada$Pais=="Libya",'Pais']="Libia"
+invprivada[invprivada$Pais=="Equatorial Guinea",'Pais']="Guinea ecuatorial"
+invprivada[invprivada$Pais=="Zimbabwe",'Pais']="Zimbabue"
+
+```
+```{r}
+row.names(invprivada)=NULL
+invprivada[,order(c(2:9))]
+```
+
+```{r}
+#MEDIA 
+invprivada$INVERPRIVADA = rowMeans(invprivada[,2:9], na.rm = TRUE)
+#NOS QUEDAMOS SOLO CON LA MEDIA
+invprivada$`2015`=NULL
+invprivada$`2014`=NULL
+invprivada$`2013`=NULL
+invprivada$`2012`=NULL
+invprivada$`2011`=NULL
+invprivada$`2010`=NULL
+invprivada$`2009`=NULL
+invprivada$`2008`=NULL
+
+invprivada <- invprivada[with(invprivada, order(invprivada$Pais)), ]
+row.names(invprivada)=NULL
+#VERIFICO 
+str(invprivada)
+```
+1.4 Variable independiente: INVERSION PÚBLICA
+
+```{r}
+#EN ESTE PASO IMPORTÉ MI DATA DE INVERSIÓN PÚBLICA DEL AÑO 2008 
+library(htmltab)
+linkpublico= 'https://datosmacro.expansion.com/estado/gasto?anio=2008'
+linkpath='//*[@id="node-10595"]/div[4]/div'
+p2008 = htmltab(doc = linkpublico,
+                which =linkpath)
+link2009= 'https://datosmacro.expansion.com/estado/gasto?anio=2009'
+linkpath2009= '//*[@id="node-10595"]/div[4]/div/div[2]'
+p2009= htmltab(doc = link2009,
+                     which = linkpath2009)
+link2010= 'https://datosmacro.expansion.com/estado/gasto?anio=2010'
+linkpath2010='//*[@id="tb1"]'
+p2010 = htmltab(doc =  link2010,
+                      which = linkpath2010)
+link2011= 'https://datosmacro.expansion.com/estado/gasto?anio=2011'
+linkpath2011='//*[@id="tb1"]'
+p2011 = htmltab(doc =  link2011,
+                      which = linkpath2011)
+link2012= 'https://datosmacro.expansion.com/estado/gasto?anio=2012'
+linkpath2012='//*[@id="tb1"]'
+p2012 = htmltab(doc =  link2012,
+                      which = linkpath2012)
+link2013= 'https://datosmacro.expansion.com/estado/gasto?anio=2013'
+linkpath2013='//*[@id="node-10595"]/div[4]/div/div[2]'
+p2013 = htmltab(doc =  link2013,
+                      which = linkpath2013)
+link2014= 'https://datosmacro.expansion.com/estado/gasto?anio=2014'
+linkpath2014='//*[@id="tb1"]'
+p2014 = htmltab(doc =  link2014,
+                      which = linkpath2014)
+link2015= 'https://datosmacro.expansion.com/estado/gasto?anio=2015'
+linkpath2015='//*[@id="tb1"]'
+p2015 = htmltab(doc =  link2015,
+                      which = linkpath2015)
+```
+
+
+```{r}
+#ELIMINAMOS COLUMNAS INNCESARIAS
+p2015[,c(2,3,4,5,7,8,9)]=NULL
+p2014[,c(2,3,4,5,7,8,9)]=NULL
+p2013[,c(2,3,4,5,7,8,9)]=NULL
+p2012[,c(2,3,4,5,7,8,9)]=NULL
+p2011[,c(2,3,4,5,7,8,9)]=NULL
+p2010[,c(2,3,4,5,7,8,9)]=NULL
+p2009[,c(2,3,4,6,7,8)]=NULL
+p2008[,c(2,3,4,6,7,8)]=NULL
+```
+
+```{r}
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2008)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2008)[2]= 'GP2008'
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA
+p2008$`GP2008` = gsub("\\%", "", p2008$`GP2008`)
+p2008$`GP2008` = gsub("\\,", ".", p2008$`GP2008`)
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2008$`Pais` = gsub("\\[+]", " ", p2008$`Pais`)
+p2008$`Pais` = gsub("\\+", "", p2008$`Pais`)
+p2008$`Pais` = gsub("\\[", "", p2008$`Pais`)
+p2008$`Pais` = gsub("\\]", "", p2008$`Pais`)
+
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2009)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2009)[2]= 'GP2009'
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA
+p2009$`GP2009` = gsub("\\%", "", p2009$`GP2009`)
+p2009$`GP2009` = gsub("\\,", ".", p2009$`GP2009`)
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2009$`Pais` = gsub("\\[+]", " ", p2009$`Pais`)
+p2009$`Pais` = gsub("\\+", "", p2009$`Pais`)
+p2009$`Pais` = gsub("\\[", "", p2009$`Pais`)
+p2009$`Pais` = gsub("\\]", "", p2009$`Pais`)
+
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2010)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2010)[2]= 'GP2010'
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA
+ p2010$`GP2010` = gsub("\\%", "", p2010$`GP2010`)
+
+ p2010$`GP2010` = gsub("\\,", ".", p2010$`GP2010`)
+ #SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2010$`Pais` = gsub("\\[+]", " ", p2010$`Pais`)
+
+p2010$`Pais` = gsub("\\+", "", p2010$`Pais`)
+
+p2010$`Pais` = gsub("\\[", "", p2010$`Pais`)
+
+p2010$`Pais` = gsub("\\]", "", p2010$`Pais`)
+
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2011)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2011)[2]= 'GP2011'
+#SE REALIZARÁ LA LIMPIEZA DE LA COLUMNA DOS
+p2011$`GP2011` = gsub("\\%", "", p2011$`GP2011`)
+p2011$`GP2011` = gsub("\\,", ".", p2011$`GP2011`)
+ p2011$`GP2011` = gsub("\\%", "", p2011$`GP2011`)
+ 
+ #SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2011$`Pais` = gsub("\\[+]", " ", p2011$`Pais`)
+p2011$`Pais` = gsub("\\+", "", p2011$`Pais`)
+p2011$`Pais` = gsub("\\[", "", p2011$`Pais`)
+p2011$`Pais` = gsub("\\]", "", p2011$`Pais`)
+
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2012)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2012)[2]= 'GP2012'
+#SE REALIZARÁ LA LIMPIEZA DE LA COLUMNA DOS
+p2012$`GP2012` = gsub("\\%", "", p2012$`GP2012`)
+p2012$`GP2012` = gsub("\\,", ".", p2012$`GP2012`)
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2012$`Pais` = gsub("\\[+]", " ", p2012$`Pais`)
+p2012$`Pais` = gsub("\\+", "", p2012$`Pais`)
+p2012$`Pais` = gsub("\\[", "", p2012$`Pais`)
+p2012$`Pais` = gsub("\\]", "", p2012$`Pais`)
+
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2013)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2013)[2]= 'GP2013'
+#SE REALIZARÁ LA LIMPIEZA DE LA COLUMNA DOS 
+ p2013$`GP2013` = gsub("\\%", "", p2013$`GP2013`)
+
+ p2013$`GP2013` = gsub("\\,", ".", p2013$`GP2013`)
+ 
+ #SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2013$`Pais` = gsub("\\[+]", " ", p2013$`Pais`)
+
+p2013$`Pais` = gsub("\\+", "", p2013$`Pais`)
+
+p2013$`Pais` = gsub("\\[", "", p2013$`Pais`)
+
+p2013$`Pais` = gsub("\\]", "", p2013$`Pais`)
+
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2014)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2014)[2]= 'GP2014'
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA DE LA COLUMNA DOS
+ p2014$`GP2014` = gsub("\\%", "", p2014$`GP2014`)
+ p2014$`GP2014` = gsub("\\,", ".", p2014$`GP2014`)
+ #SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2014$`Pais` = gsub("\\[+]", " ", p2014$`Pais`)
+
+p2014$`Pais` = gsub("\\+", "", p2014$`Pais`)
+
+p2014$`Pais` = gsub("\\[", "", p2014$`Pais`)
+
+p2014$`Pais` = gsub("\\]", "", p2014$`Pais`)
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA PAIS
+names(p2015)[1]= 'Pais'
+#SE PROCEDE A MODIFICAR EL NOMBRE DE LA COLUMNA DOS
+names(p2015)[2]= 'GP2015'
+#SE REALIZARÁ LA LIMPIEZA DE LA DATA DE LA COLUMNA DOS
+p2015$`GP2015` = gsub("\\%", "", p2015$`GP2015`)
+p2015$`GP2015` = gsub("\\,", ".", p2015$`GP2015`)
+#SE PROCEDE A ELIMINAR EL SÍMBOLO [+] UBICADO DESPUÉS DE CADA PAÍS
+p2015$`Pais` = gsub("\\[+]", " ", p2015$`Pais`)
+p2015$`Pais` = gsub("\\+", "", p2015$`Pais`)
+p2015$`Pais` = gsub("\\[", "", p2015$`Pais`)
+p2015$`Pais` = gsub("\\]", "", p2015$`Pais`)
+```
+
+```{r}
+#CONVIRTIENDO A NUMERICA
+p2015$`GP2015`=as.numeric(p2015$`GP2015`)
+p2014$`GP2014`=as.numeric(p2014$`GP2014`)
+p2013$`GP2013`=as.numeric(p2013$`GP2013`)
+p2012$`GP2012`=as.numeric(p2012$`GP2012`)
+p2011$`GP2011`=as.numeric(p2011$`GP2011`)
+p2010$`GP2010`=as.numeric(p2010$`GP2010`)
+p2009$`GP2009`=as.numeric(p2009$`GP2009`)
+p2008$`GP2008`=as.numeric(p2008$`GP2008`)
+
+```
+
+```{r}
+row.names(p2008)=NULL
+row.names(p2009)=NULL
+row.names(p2010)=NULL
+row.names(p2011)=NULL
+row.names(p2012)=NULL
+row.names(p2013)=NULL
+row.names(p2014)=NULL
+row.names(p2015)=NULL
+```
+
+```{r}
+#IMPUTO
+p2008[is.na(p2008$GP2008),"GP2008"]=mean(p2008$GP2008, na.rm=T)
+
+p2009[is.na(p2009$GP2009),"GP2009"]=mean(p2009$GP2009, na.rm=T)
+
+p2010[is.na(p2010$GP2010),"GP2010"]=mean(p2010$GP2010, na.rm=T)
+
+p2011[is.na(p2011$GP2011),"GP2011"]=mean(p2011$GP2011, na.rm=T)
+
+p2012[is.na(p2012$GP2012),"GP2012"]=mean(p2012$GP2012, na.rm=T)
+
+p2013[is.na(p2013$GP2013),"GP2013"]=mean(p2013$GP2013, na.rm=T)
+
+p2014[is.na(p2014$GP2014),"GP2014"]=mean(p2014$GP2014, na.rm=T)
+
+p2015[is.na(p2015$GP2015),"GP2015"]=mean(p2015$GP2015, na.rm=T)
+
+```
+
+
+
+
+```{r}
+#SELECCIONO PAISES DEL CONTINENTE AFRICANO
+p2008=p2008[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,159,157,149,155,162,186,150,175,164,177,50,187,188),]
+
+p2009=p2009[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,159,157,149,155,162,186,150,175,164,177,50,187,188),]
+
+p2010=p2010[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,160,157,149,155,187,150,159,176,165,178,50,188,189,164),]
+
+p2011=p2011[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,160,157,149,155,187,150,159,176,165,178,50,188,189,164),]
+
+p2012=p2012[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,160,157,149,155,187,150,159,176,165,178,50,188,189,164),]
+
+p2013=p2013[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,160,157,149,155,187,150,159,176,165,178,50,188,189,164),]
+
+p2014=p2014[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,160,157,149,155,187,150,159,176,165,178,50,188,189,164),]
+
+p2015=p2015[c(15,24,72,54,28,34,27,47,44,163,92,42,57,58,59,63,67,66,68,69,88,102,101,106,110,120,113,107,118,116,123,124,126,39,38,40,146,160,157,149,155,187,150,159,176,165,178,50,188,189,164),]
+
+```
+
+
+```{r}
+#CAMBIO LOS NOMBRES DE LOS PAISES
+
+p2008$Pais=gsub(' ',"",p2008$Pais)
+
+p2008[p2008$Pais=="Benín",'Pais']="Benin"
+p2008[p2008$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2008[p2008$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2008[p2008$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2008[p2008$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2008[p2008$Pais=="Camerún",'Pais']= "Camerun"
+p2008[p2008$Pais=="Etiopía",'Pais']= "Etiopia"
+p2008[p2008$Pais=="Gabón",'Pais']= "Gabon"
+p2008[p2008$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2008[p2008$Pais=="Malí",'Pais']= "Mali"
+p2008[p2008$Pais=="Níger",'Pais']= "Niger"
+p2008[p2008$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2008[p2008$Pais=="Sudán",'Pais']= "Sudan"
+p2008[p2008$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2008[p2008$Pais=="Túnez",'Pais']= "Tunez"
+p2008[p2008$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2008[p2008$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2008[p2008$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2008[p2008$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+
+
+p2009$Pais=gsub(' ',"",p2009$Pais)
+
+
+p2009[p2009$Pais=="Benín",'Pais']="Benin"
+p2009[p2009$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2009[p2009$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2009[p2009$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2009[p2009$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2009[p2009$Pais=="Camerún",'Pais']= "Camerun"
+p2009[p2009$Pais=="Etiopía",'Pais']= "Etiopia"
+p2009[p2009$Pais=="Gabón",'Pais']= "Gabon"
+p2009[p2009$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2009[p2009$Pais=="Malí",'Pais']= "Mali"
+p2009[p2009$Pais=="Níger",'Pais']= "Niger"
+p2009[p2009$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2009[p2009$Pais=="Sudán",'Pais']= "Sudan"
+p2009[p2009$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2009[p2009$Pais=="Túnez",'Pais']= "Tunez"
+p2009[p2009$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2009[p2009$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2009[p2009$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2009[p2009$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+
+p2010$Pais=gsub(' ',"",p2010$Pais)
+
+p2010[p2010$Pais=="Benín",'Pais']="Benin"
+p2010[p2010$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2010[p2010$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2010[p2010$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2010[p2010$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2010[p2010$Pais=="Camerún",'Pais']= "Camerun"
+p2010[p2010$Pais=="Etiopía",'Pais']= "Etiopia"
+p2010[p2010$Pais=="Gabón",'Pais']= "Gabon"
+p2010[p2010$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2010[p2010$Pais=="Malí",'Pais']= "Mali"
+p2010[p2010$Pais=="Níger",'Pais']= "Niger"
+p2010[p2010$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2010[p2010$Pais=="Sudán",'Pais']= "Sudan"
+p2010[p2010$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2010[p2010$Pais=="Túnez",'Pais']= "Tunez"
+p2010[p2010$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2010[p2010$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2010[p2010$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2010[p2010$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+p2010[p2010$Pais=="SudándelSur",'Pais']= "Sudan del sur"
+
+
+p2011$Pais=gsub(' ',"",p2011$Pais)
+
+
+p2011[p2011$Pais=="Benín",'Pais']="Benin"
+p2011[p2011$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2011[p2011$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2011[p2011$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2011[p2011$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2011[p2011$Pais=="Camerún",'Pais']= "Camerun"
+p2011[p2011$Pais=="Etiopía",'Pais']= "Etiopia"
+p2011[p2011$Pais=="Gabón",'Pais']= "Gabon"
+p2011[p2011$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2011[p2011$Pais=="Malí",'Pais']= "Mali"
+p2011[p2011$Pais=="Níger",'Pais']= "Niger"
+p2011[p2011$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2011[p2011$Pais=="Sudán",'Pais']= "Sudan"
+p2011[p2011$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2011[p2011$Pais=="Túnez",'Pais']= "Tunez"
+p2011[p2011$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2011[p2011$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2011[p2011$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2011[p2011$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+p2011[p2011$Pais=="SudándelSur",'Pais']= "Sudan del sur"
+
+
+p2012$Pais=gsub(' ',"",p2012$Pais)
+
+p2012[p2012$Pais=="Benín",'Pais']="Benin"
+p2012[p2012$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2012[p2012$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2012[p2012$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2012[p2012$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2012[p2012$Pais=="Camerún",'Pais']= "Camerun"
+p2012[p2012$Pais=="Etiopía",'Pais']= "Etiopia"
+p2012[p2012$Pais=="Gabón",'Pais']= "Gabon"
+p2012[p2012$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2012[p2012$Pais=="Malí",'Pais']= "Mali"
+p2012[p2012$Pais=="Níger",'Pais']= "Niger"
+p2012[p2012$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2012[p2012$Pais=="Sudán",'Pais']= "Sudan"
+p2012[p2012$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2012[p2012$Pais=="Túnez",'Pais']= "Tunez"
+p2012[p2012$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2012[p2012$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2012[p2012$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2012[p2012$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+p2012[p2012$Pais=="SudándelSur",'Pais']= "Sudan del sur"
+
+
+
+p2013$Pais=gsub(' ',"",p2013$Pais)
+
+p2013[p2013$Pais=="Benín",'Pais']="Benin"
+p2013[p2013$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2013[p2013$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2013[p2013$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2013[p2013$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2013[p2013$Pais=="Camerún",'Pais']= "Camerun"
+p2013[p2013$Pais=="Etiopía",'Pais']= "Etiopia"
+p2013[p2013$Pais=="Gabón",'Pais']= "Gabon"
+p2013[p2013$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2013[p2013$Pais=="Malí",'Pais']= "Mali"
+p2013[p2013$Pais=="Níger",'Pais']= "Niger"
+p2013[p2013$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2013[p2013$Pais=="Sudán",'Pais']= "Sudan"
+p2013[p2013$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2013[p2013$Pais=="Túnez",'Pais']= "Tunez"
+p2013[p2013$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2013[p2013$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2013[p2013$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2013[p2013$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+p2013[p2013$Pais=="SudándelSur",'Pais']= "Sudan del sur"
+
+
+p2014$Pais=gsub(' ',"",p2014$Pais)
+
+p2014[p2014$Pais=="Benín",'Pais']="Benin"
+p2014[p2014$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2014[p2014$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2014[p2014$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2014[p2014$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2014[p2014$Pais=="Camerún",'Pais']= "Camerun"
+p2014[p2014$Pais=="Etiopía",'Pais']= "Etiopia"
+p2014[p2014$Pais=="Gabón",'Pais']= "Gabon"
+p2014[p2014$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2014[p2014$Pais=="Malí",'Pais']= "Mali"
+p2014[p2014$Pais=="Níger",'Pais']= "Niger"
+p2014[p2014$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2014[p2014$Pais=="Sudán",'Pais']= "Sudan"
+p2014[p2014$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2014[p2014$Pais=="Túnez",'Pais']= "Tunez"
+p2014[p2014$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2014[p2014$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2014[p2014$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2014[p2014$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+p2014[p2014$Pais=="SudándelSur",'Pais']= "Sudan del sur"
+
+
+p2015$Pais=gsub(' ',"",p2015$Pais)
+
+p2015[p2015$Pais=="Benín",'Pais']="Benin"
+p2015[p2015$Pais=="BurkinaFaso",'Pais']="Burkina Faso"
+p2015[p2015$Pais=="RepúblicaDemocráticadelCongo",'Pais']= "Republica Democratica del Congo"
+p2015[p2015$Pais=="RepúblicaCentroafricana",'Pais']= "Republica Centroafricana"
+p2015[p2015$Pais=="RepúblicadelCongo",'Pais']= "Republica del Congo"
+p2015[p2015$Pais=="Camerún",'Pais']= "Camerun"
+p2015[p2015$Pais=="Etiopía",'Pais']= "Etiopia"
+p2015[p2015$Pais=="Gabón",'Pais']= "Gabon"
+p2015[p2015$Pais=="Guinea-Bisáu",'Pais']= "Guinea Bisau"
+p2015[p2015$Pais=="Malí",'Pais']= "Mali"
+p2015[p2015$Pais=="Níger",'Pais']= "Niger"
+p2015[p2015$Pais=="Sudáfrica",'Pais']= "Sudafrica"
+p2015[p2015$Pais=="Sudán",'Pais']= "Sudan"
+p2015[p2015$Pais=="SantoToméyPríncipe",'Pais']= "Santo Tome y Principe"
+p2015[p2015$Pais=="Túnez",'Pais']= "Tunez"
+p2015[p2015$Pais=="SierraLeona",'Pais']= "Sierra Leona"
+p2015[p2015$Pais=="CaboVerde",'Pais']= "Cabo Verde"
+p2015[p2015$Pais=="CostadeMarfil",'Pais']= "Costa de Marfil"
+p2015[p2015$Pais=="GuineaEcuatorial",'Pais']= "Guinea ecuatorial"
+p2015[p2015$Pais=="SudándelSur",'Pais']= "Sudan del sur"
+```
+
+
+```{r}
+#ORDENO LA NUMERACIÓN
+row.names(p2015)=NULL
+row.names(p2014)=NULL
+row.names(p2013)=NULL
+row.names(p2012)=NULL
+row.names(p2011)=NULL
+row.names(p2010)=NULL
+row.names(p2009)=NULL
+row.names(p2008)=NULL
+
+#eliminamos Sudán del Sur, no será parte de esta investigación
+
+p2010=p2010[-44,]
+p2011=p2011[-44,]
+p2012=p2012[-44,]
+p2013=p2013[-44,]
+p2014=p2014[-44,]
+p2015=p2015[-44,]
+```
+
+```{r}
+#ORDENO ALFABETICAMENTE
+p2008<-p2008[with(p2008,order(p2008$Pais)),]
+p2009<-p2009[with(p2009,order(p2009$Pais)),]
+p2010<-p2010[with(p2010,order(p2010$Pais)),]
+p2011<-p2011[with(p2011,order(p2011$Pais)),]
+p2012<-p2012[with(p2012,order(p2012$Pais)),]
+p2013<-p2013[with(p2013,order(p2013$Pais)),]
+p2014<-p2014[with(p2014,order(p2014$Pais)),]
+p2015<-p2015[with(p2015,order(p2015$Pais)),]
+
+```
+
+```{r}
+#APLICO MERGE PARA JUNTARLOS
+inv1=merge(p2008,p2009)
+inv2=merge(inv1,p2010)
+inv3=merge(inv2,p2011)
+inv4=merge(inv3,p2012)
+inv5=merge(inv4,p2013)
+inv6=merge(inv5,p2014)
+invpublica=merge(inv6,p2015)
+```
+
+
+```{r}
+#PROMEDIO 2008-2015
+invpublica$INVERPUBLICA = rowMeans(invpublica[,2:9], na.rm = TRUE)
+
+invpublica[,2:9]=NULL
+```
+
+```{r}
+#VERIFICO LIMPIEZA
+str(invpublica)
+```
+
+--------------------------------------------------------------------------------------------------
+1.4  DOS VARIABLES INDEPENDIENTES: "NEOGOBERNANZA" y "GOBERNANZA EMBRIONARIA" derivadas del "Indice de Gobernanza Africano"
+
+MI INDEPENDIENTE
+
+#LIMPIEZA
+```{r}
+#########  LIMPIEZA
+library(rio)
+DATAJS=import("https://github.com/JhanpolS/variableindep/raw/master/GobernanzaPROMED__OFICIAL.xlsx")
+str(DATAJS)
+names(DATAJS)=gsub(" ","",names(DATAJS))
+names(DATAJS)
+table(DATAJS$RURALSECTOR,useNA ='always')
+table(DATAJS$EDUCATION,useNA ='always')
+#ME QUEDO SÓLO CON LAS FILAS QUE CONTIENEN LOS PROMEDIOS DE CADA PAÍS Y SUS VARIABLES
+DATAJS=DATAJS[-(1:8),]
+DATAJS=DATAJS[-(2:9),]
+DATAJS=DATAJS[-(3:10),]
+DATAJS=DATAJS[-(4:11),]
+DATAJS=DATAJS[-(5:12),]
+DATAJS=DATAJS[-(6:13),]
+DATAJS=DATAJS[-(7:14),]
+DATAJS=DATAJS[-(8:15),]
+DATAJS=DATAJS[-(9:16),]
+DATAJS=DATAJS[-(10:17),]
+DATAJS=DATAJS[-(11:18),]
+DATAJS=DATAJS[-(12:19),]
+DATAJS=DATAJS[-(13:20),]
+DATAJS=DATAJS[-(14:21),]
+DATAJS=DATAJS[-(15:22),]
+DATAJS=DATAJS[-(16:23),]
+DATAJS=DATAJS[-(17:24),]
+DATAJS=DATAJS[-(18:25),]
+DATAJS=DATAJS[-(19:26),]
+DATAJS=DATAJS[-(20:27),]
+DATAJS=DATAJS[-(21:28),]
+DATAJS=DATAJS[-(22:29),]
+DATAJS=DATAJS[-(23:30),]
+DATAJS=DATAJS[-(24:31),]
+DATAJS=DATAJS[-(25:32),]
+DATAJS=DATAJS[-(26:33),]
+DATAJS=DATAJS[-(27:34),]
+DATAJS=DATAJS[-(28:35),]
+DATAJS=DATAJS[-(29:36),]
+DATAJS=DATAJS[-(30:37),]
+DATAJS=DATAJS[-(31:38),]
+DATAJS=DATAJS[-(32:39),]
+DATAJS=DATAJS[-(33:40),]
+DATAJS=DATAJS[-(34:41),]
+DATAJS=DATAJS[-(35:42),]
+DATAJS=DATAJS[-(36:43),]
+DATAJS=DATAJS[-(37:44),]
+DATAJS=DATAJS[-(38:45),]
+DATAJS=DATAJS[-(39:46),]
+DATAJS=DATAJS[-(40:47),]
+DATAJS=DATAJS[-(41:48),]
+DATAJS=DATAJS[-(42:49),]
+DATAJS=DATAJS[-(43:50),]
+DATAJS=DATAJS[-(44:51),]
+DATAJS=DATAJS[-(45:52),]
+DATAJS=DATAJS[-(46:53),]
+DATAJS=DATAJS[-(47:54),]
+DATAJS=DATAJS[-(48:55),]
+DATAJS=DATAJS[-(49:56),]
+DATAJS=DATAJS[-(50:57),]
+DATAJS=DATAJS[-(51:58),]
+DATAJS=DATAJS[-(52:59),]
+DATAJS=DATAJS[-(53:60),]
+DATAJS=DATAJS[-(54:61),]
+DATAJS=DATAJS[-(55:62),]
+DATAJS=DATAJS[-(56:63),]
+
+#Elimino columnas
+DATAJS$Country_ISO=NULL
+DATAJS$Year=NULL
+DATAJS$OVERALLGOVERNANCE=NULL
+names(DATAJS)
+
+names(DATAJS)
+names(DATAJS)=c("Pais","SAFETYandRULEOFLAW","RULEOFLAW","TRANSPARENCYandACCOUNTABILITY","PERSONALSAFETY","NATIONALSECURITY","PARTICIPATIONandHUMANRIGHTS","PARTICIPATION","RIGHTS","GENDER","SUSTAINABLEECONOMICOPPORTUNITY","PUBLICMANAGEMENT", "BUSINESSENVIRONMENT","INFRASTRUCTURE","RURALSECTOR","HUMANDEVELOPMENT","WELFARE","EDUCATION","HEALTH")
+
+
+
+
+```
+Cambiando el nombre de los países
+
+```{r}
+#LE CAMBIO EL NOMBRE A LOS PAÍSES
+DATAJS[DATAJS$Pais=="Botswana",'Pais']="Botsuana"
+
+DATAJS[DATAJS$Pais=="Cameroon",'Pais']="Camerun"
+
+DATAJS[DATAJS$Pais=="Djibouti",'Pais']="Yibuti"
+
+DATAJS[DATAJS$Pais=="Djibouti",'Pais']="Yibuti"
+DATAJS[DATAJS$Pais=="Comoros",'Pais']="Comoras"
+DATAJS[DATAJS$Pais=="Egypt",'Pais']="Egipto"
+DATAJS[DATAJS$Pais=="Equatorial Guinea",'Pais']="Guinea ecuatorial"
+DATAJS[DATAJS$Pais=="Ethiopia",'Pais']="Etiopia"
+DATAJS[DATAJS$Pais=="Kenya",'Pais']="Kenia"
+
+DATAJS[DATAJS$Pais=="Libya",'Pais']="Libia"
+DATAJS[DATAJS$Pais=="Malawi",'Pais']="Malaui"
+DATAJS[DATAJS$Pais=="Mauritius",'Pais']="Mauricio"
+DATAJS[DATAJS$Pais=="Rwanda",'Pais']="Ruanda"
+DATAJS[DATAJS$Pais=="São Tomé & Príncipe",'Pais']="Santo Tome y Principe"
+DATAJS[DATAJS$Pais=="Sierra Leone",'Pais']="Sierra Leona"
+DATAJS[DATAJS$Pais=="South Africa",'Pais']="Sudafrica"
+DATAJS[DATAJS$Pais=="South Sudan",'Pais']="Sudan del Sur"
+DATAJS[DATAJS$Pais=="Swaziland",'Pais']="Suazilandia"
+DATAJS[DATAJS$Pais=="Tunisia",'Pais']="Tunez"
+DATAJS[DATAJS$Pais=="ZImbabwe",'Pais']="Zimbabue"
+DATAJS[DATAJS$Pais=="Algeria",'Pais']="Argelia"
+DATAJS[DATAJS$Pais=="Central African Republic",'Pais']="Republica Centroafricana"
+DATAJS[DATAJS$Pais=="Democratic Republic of Congo",'Pais']="Republica Democratica del Congo"
+
+DATAJS[DATAJS$Pais=="Côte d'Ivoire",'Pais']="Costa de Marfil"
+
+DATAJS[DATAJS$Pais=="Lesotho",'Pais']="Lesoto"
+
+DATAJS[DATAJS$Pais=="Guinea-Bissau",'Pais']="Guinea Bisau"
+DATAJS[DATAJS$Pais=="Morocco",'Pais']="Marruecos"
+DATAJS[DATAJS$Pais=="Congo",'Pais']="Republica del Congo"
+
+```
+
+#Convierto a numérico y organizo la data
+```{r}
+DATAJS <- DATAJS[with(DATAJS, order(DATAJS$Pais)), ]
+
+DATAJS[,c(2:15)]=lapply(DATAJS[,c(2:15)], as.numeric)
+row.names(DATAJS)=NULL
+DATAJS=DATAJS[-47,] #Elimino Sudán del Sur, a penas se creó en el 2011
+row.names(DATAJS)=NULL
+row.names(DATAJS)=DATAJS$Pais
+#Elimino scores que no necesito
+DATAJS=DATAJS[,-c(2,7,11,16)] # sin los Scores ni nombre de país.
+DATAJS=na.omit(DATAJS) 
+#Verifico la limpieza de mi data
+str(DATAJS)
+```
+Evaluando Data
+Pruebas previas para el análisis factorial 
+
+```{r}
+# esta es:
+theDataFactoExplo=DATAJS[,-1] # sin los Scores ni nombre de país.
+
+library(polycor)
+corMatrixFactoExplo=polycor::hetcor(theDataFactoExplo)$correlations
+```
+Exploro correlaciones:
+
+Sin evaluar significancia
+```{r}
+library(ggcorrplot)
+
+ggcorrplot(corMatrixFactoExplo)
+```
+Evaluando significancia
+```{r}
+ggcorrplot(corMatrixFactoExplo,
+          p.mat = cor_pmat(corMatrixFactoExplo),
+          insig = "blank")
+```
+Vemos bloques correlacionados, tengo esperanzas de un buen análisis
+
+Verificaré si los datos me permiten factorizar
+```{r}
+library(psych)
+psych::KMO(corMatrixFactoExplo)
+
+#El overall es mayor a 0.6. Por lo tanto la factorización tiene esperanzas.
+```
+Ahora se verifica si la matriz de correlaciones es adecuada
+
+Primera prueba: 
+Hnula: La matriz de correlacion es una matriz identidad
+
+```{r}
+cortest.bartlett(corMatrixFactoExplo,n=nrow(theDataFactoExplo))$p.value>0.05
+```
+Segunda prueba:
+Hnula: La matriz de correlacion es una matriz singular.
+```{r}
+library(matrixcalc)
+
+is.singular.matrix(corMatrixFactoExplo)
+```
+Determinaremos en cuantos factores o variables latentes podríamos redimensionar la data:
+```{r}
+fa.parallel(theDataFactoExplo,fm = 'ML', fa = 'fa')
+
+```
+Se sugiere 2 latentes, veamos:
+
+Redimensionar a numero menor de factores
+Resultado inicial:
+
+```{r}
+library(GPArotation)
+resfaFactoExplo <- fa(theDataFactoExplo,nfactors = 2,cor = 'mixed',rotate = "varimax",fm="minres")
+```
+
+```{r}
+print(resfaFactoExplo$loadings)
+#Esto nos dirá que variable pertenece a cada latente.
+```
+Resultado mejorado
+```{r}
+print(resfaFactoExplo$loadings,cutoff = 0.51)
+#Esto nos dice que el Indice de Gobernanza está partido. Es interesante ver cómo el factorial reconoce estructuras latentes.
+```
+
+
+
+
+
+Resultado visual
+```{r}
+fa.diagram(resfaFactoExplo)
+
+```
+
+Evaluando Resultado obtenido:
+La Raíz del error cuadrático medio corregida está cerca a cero?
+```{r}
+resfaFactoExplo$crms
+#Por convención del curso si baja de 0.1 esta cerca a cero. Por lo tanto afirmamos que sí.
+```
+La Raíz del error cuadrático medio de aproximación es menor a 0.05?
+```{r}
+resfaFactoExplo$RMSEA
+#Vemos que aquí tiene debilidad
+```
+El índice de Tucker-Lewis es mayor a 0.9:
+```{r}
+resfaFactoExplo$TLI
+# Nuestro indice de Tucker lewis no es mayor a 0.9.
+```
+¿Que variables aportaron mas a los factores?
+```{r}
+sort(resfaFactoExplo$communality)
+
+```
+Que variables contribuyen a mas de un factor?
+
+```{r}
+sort(resfaFactoExplo$complexity)
+#Tenemos complicaciones con RURALSECTO, BUSINESSEENVIRONMENT,WELFARE Y TRANSPARENCYANDACCOUNTABILITY porque coquetean con casi 2 factores. 
+```
+
+
+
+Posibles valores proyectados:
+
+```{r}
+as.data.frame(resfaFactoExplo$scores)
+```
+
+```{r}
+DATAJSFACTO=cbind(DATAJS[1],as.data.frame(resfaFactoExplo$scores))
+names(DATAJSFACTO)=c("Pais","NEOGOBERNANZA","GOBERNANZAEMBRIONARIA")
+
+library(plotly)
+plot_ly(data=DATAJSFACTO, x = ~NEOGOBERNANZA, y = ~GOBERNANZAEMBRIONARIA, text=~Pais) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'NEOGOBERNANZA'),yaxis = list(title = 'GOBERNANZAEMBRIONARIA')))
+```
+```{r}
+library(fpc)
+library(cluster)
+library(dbscan)
+g.dist.cmd = daisy(DATAJSFACTO[,c(2:3)], metric = 'euclidean')
+kNNdistplot(g.dist.cmd, k=2)
+```
+
+
+
+
+
+
+
+```{r}
+
+resDB=fpc::dbscan(g.dist.cmd, eps=0.6, MinPts=2,method = 'dist')
+DATAJSFACTO$clustDB=as.factor(resDB$cluster)
+aggregate(cbind(NEOGOBERNANZA, GOBERNANZAEMBRIONARIA) # dependientes
+          ~ clustDB, # nivel
+          data = DATAJSFACTO,    # data
+          max)  
+```
+
+
+```{r}
+library(fpc)
+library(cluster)
+library(dbscan)
+plot_ly(data=DATAJSFACTO, x = ~NEOGOBERNANZA, y = ~GOBERNANZAEMBRIONARIA, text=~Pais, color = ~clustDB) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'NEOGOBERNANZA'),
+                     yaxis = list(title = 'GOBERNANZAEMBRIONARIA')))
+```
+2.MERGE
+
+```{r}
+merge1=merge(DATAJSFACTO,invprivada,all.x=T,all.y=T)
+merge2=merge(merge1,invpublica,all.x=T,all.y=T)
+merge3=merge(merge2,Corrupción,all.x=T,all.y=T)
+DATAFINAL=merge(merge3,dependiente,all.x=T,all.y=T)
+#Elimino BAREIN, BOTSUANA(SE REPITE) Y SUDAN DEL SUR(PAIS QUE NO TENDREMOS EN CUENTA DEBIDO APENAS SE SE ACABA DE CREAR EN EL AÑO 2011)
+DATAFINAL=DATAFINAL[-3,]
+DATAFINAL=DATAFINAL[-4,]
+DATAFINAL=DATAFINAL[-47,]
+
+#IMPUTO DATOS FALTANTES
+DATAFINAL[is.na(DATAFINAL$INVERPRIVADA),"INVERPRIVADA"]=mean(DATAFINAL$INVERPRIVADA, na.rm=T)
+DATAFINAL[is.na(DATAFINAL$INVERPUBLICA),"INVERPUBLICA"]=mean(DATAFINAL$INVERPUBLICA, na.rm=T)
+DATAFINAL[is.na(DATAFINAL$Corrupcion),"Corrupcion"]=mean(DATAFINAL$Corrupcion, na.rm=T)
+#REDONDEO
+DATAFINAL$NEOGOBERNANZA=round(DATAFINAL$NEOGOBERNANZA,2)
+DATAFINAL$GOBERNANZAEMBRIONARIA=round(DATAFINAL$GOBERNANZAEMBRIONARIA,2)
+DATAFINAL$INVERPRIVADA=round(DATAFINAL$INVERPRIVADA,2)
+DATAFINAL$INVERPUBLICA=round(DATAFINAL$INVERPUBLICA,2)
+DATAFINAL$Corrupcion=round(DATAFINAL$Corrupcion,2)
+DATAFINAL$clustDB=NULL
+
+#VERIFICO MERGE
+str(DATAFINAL)
+row.names(DATAFINAL)=DATAFINAL$Pais
+#FINALMENTE NOS QUEDAMOS CON 53 PAÍSES, 7 VARIABLES (5 INDEPENDIENTES Y 1 DEPENDIENTE)
+```
+3. REGRESIÓN LINEAL MÚLTIPLE
+
+```{r}
+modelo1=formula(TasadevariacionVIH~NEOGOBERNANZA)
+modelo2=formula(TasadevariacionVIH~NEOGOBERNANZA+GOBERNANZAEMBRIONARIA)
+
+modelo3= formula(TasadevariacionVIH~NEOGOBERNANZA+GOBERNANZAEMBRIONARIA + INVERPRIVADA)
+modelo4= formula(TasadevariacionVIH~NEOGOBERNANZA+GOBERNANZAEMBRIONARIA + INVERPRIVADA + INVERPUBLICA)
+modelo5= formula(TasadevariacionVIH~NEOGOBERNANZA+GOBERNANZAEMBRIONARIA + INVERPRIVADA + INVERPUBLICA + Corrupcion)
+
+```
+MODELO 1
+
+```{r, results='asis'}
+library(stargazer)
+reg1=lm(modelo1,data=DATAFINAL)
+stargazer(reg1,type = "html",intercept.bottom = FALSE)
+summary(reg1)
+```
+
+```{r}
+ggplot(DATAFINAL, aes(x=NEOGOBERNANZA, y=TasadevariacionVIH)) + 
+  geom_point()+
+  geom_smooth(method=lm)
+```
+reg 2
+```{r, results='asis'}
+reg2=lm(modelo2,data=DATAFINAL)
+stargazer(reg2,type = "html",intercept.bottom = FALSE)
+summary(reg2)
+```
+
+
+```{r}
+reg3=lm(modelo3,data=DATAFINAL)
+summary(reg3)
+```
+```{r}
+reg4=lm(modelo4,data=DATAFINAL)
+summary(reg4)
+```
+```{r}
+reg5=lm(modelo5,data=DATAFINAL)
+summary(reg5)
+```
+
+
+
+ANOVA
+```{r, results='asis'}
+tanova=anova(reg1,reg2,reg3,reg4,reg5)
+stargazer(tanova,type = 'text',summary = F,title = "Table de Análisis de Varianza")
+```
+Finalmente, podemos resumir todo en esta tabla:
+
+```{r, results='asis'}
+library(stargazer)
+stargazer(reg1,reg2,reg3,reg4,reg5, type = "text", title = "Modelos planteados",digits = 2, single.row = F,no.space = F,intercept.bottom = FALSE,
+          dep.var.caption="Variable dependiente:",
+          dep.var.labels="TasadevariacionVIH",
+          covariate.labels=c("Constante","NEOGOBERNANZA","GOBERNANZAEMBRIONARIA", "INVERPRIVADA", "INVERPUBLICA","CORRUPCION"),
+          keep.stat = c("n","adj.rsq","ser"),df = F,
+          notes.label = "Notas:")
+```
+
+
+```{r}
+library(ggplot2)
+library(sjPlot)
+```
+
+
+```{r}
+plot_models(reg1,reg2,reg3,reg4,reg5,vline.color = "grey",m.labels=c("Modelo 1","Modelo 2","Modelo 3","Modelo 4","Modelo 5"))
+
+```
+
+Diagnósticos de la Regresión
+Para que se considere que el modelo de regresión elegido es el adecuado, debemos verificar algunos requisitos a posteriori:
+
+1. Linealidad:
+
+Se asume relación lineal entre Y y Xs:
+```{r}
+# linea roja debe tender a horizontal
+plot(reg5, 1)
+```
+HOMOCEDASTICIDAD
+```{r}
+# linea roja debe tender a horizontal
+plot(reg5, 3)
+```
+
+```{r}
+library(lmtest)
+```
+
+
+```{r}
+# null: modelo homocedastico
+bptest(reg5)
+```
+3. Normalidad de los residuos
+
+```{r}
+# puntos cerca a la diagonal
+plot(reg5, 2)
+```
+
+```{r}
+shapiro.test(reg5$residuals)
+
+```
+4.No multicolinealidad
+```{r}
+library(DescTools)
+VIF(reg5) # > 5 es problematico
+```
+
+5. Valores influyentes:
+
+Hay casos particulares, que tienen la capacidad de trastocar lo que casi todos puntos representan. A veces detectandolos y suprimiendolos, podemos ver un mejor modelo:
+
+```{r}
+plot(reg5, 5)
+```
+
+Asi podemos recuperar los casos influyentes:
+```{r}
+checkReg5=as.data.frame(influence.measures(reg5)$is.inf)
+head(checkReg5)
+
+```
+Normalmente le prestamos atencion al indice de Cook y a los valores predecidos (los hat values):
+
+```{r}
+checkReg5[checkReg5$cook.d | checkReg5$hat,]
+
+```
+
+
+
+7. REGRESIÓN LINEAL DE LA VARIABLES INDEPENDIENTES:
+
+
+A. INVERSIÓN PRIVADA-PÚBLICA
+SE REALIZARÁ LA REGRESIÓN LINEAL DE LA INVERSIÓN PRIVADA CON LA DEPENDIENTE
+
+```{r}
+modeloLEDA1=formula(TasadevariacionVIH~INVERPRIVADA)
+```
+
+```{r}
+library(stargazer)
+regLED=lm(modeloLEDA1,data=DATAFINAL)
+stargazer(regLED,type = "text",intercept.bottom = FALSE)
+summary(regLED)
+```
+NO ES SIGNIFICATIVA
+
+
+
+SE REALIZARÁ LA REGRESIÓN LINEAL DE LA INVERSIÓN PÚBLICA CON LA DEPENDIENTE
+
+```{r}
+
+modeloLEDA2=formula(TasadevariacionVIH~INVERPUBLICA)
+```
+
+
+```{r}
+library(stargazer)
+regLED2=lm(modeloLEDA2,data=DATAFINAL)
+stargazer(regLED2,type = "text",intercept.bottom = FALSE)
+summary(regLED2)
+```
+NO ES SIGNIFICATIVA
+
+
+B. ÍNDICE DE PERCEPCIÓN DE CORRUPCIÓN
+
+
+```{r}
+modelodiego = formula(TasadevariacionVIH~ Corrupcion)
+```
+
+
+
+```{r}
+library(stargazer)
+regdiego=lm(modelodiego,data=DATAFINAL)
+stargazer(regdiego,type = "text",intercept.bottom = FALSE)
+summary(regdiego)
+```
+EN ESTE PUNTO DE LA INVESTIGACIÓN, YA QUE ÁFRICA CONTIENE A PENAS 53 PAÍSES, SOSPECHAMOS QUE PODRÍA ESTAR AFECTANDO EN NUESTROS RESULTADOS. Por lo tanto, aprovecharemos que nuestra dependiente puede ser configurada como una variable categórica nominal, para realizar una regresión logísitica binaria: "SI DISMINUYO" y "NO DISMINUYO"
+
+
+OVERSAMPLE SOBREMUESTREO
+
+
+```{r}
+dependiente$TASADEVARIACION<- ifelse( -0.001>=dependiente$TasadevariacionVIH, "SIDISMINUYO", "NODISMINUYO")
+dependientenominal=dependiente[,-2]
+DATANOMINAL=merge(DATAFINAL,dependientenominal)
+DATANOMINAL=DATANOMINAL[,-7]
+```
+
+```{r}
+#CONVIERTO A FACTOR MI VARIABLE INDEPENDIENTE DICOTÓMICA
+DATANOMINAL$TASADEVARIACION <- as.factor(DATANOMINAL$TASADEVARIACION)
+#Verifico
+str(DATANOMINAL)
+summary(DATANOMINAL)
+#Número de paises
+table(DATANOMINAL$TASADEVARIACION)
+```
+
+```{r}
+library(ROSE)
+data_balanced_over <- ovun.sample(TASADEVARIACION ~ ., data = DATANOMINAL, method = "over",N =80)$data
+
+table(data_balanced_over$TASADEVARIACION)
+```
+
+
+
+
+
+
+```{r}
+### primer modelo:
+#regresion1
+vars1=data_balanced_over[,c("TASADEVARIACION","NEOGOBERNANZA")]
+rlog1=glm(TASADEVARIACION~., data=vars1,family = binomial)
+#regresion2
+vars2=data_balanced_over[,c("TASADEVARIACION","NEOGOBERNANZA","GOBERNANZAEMBRIONARIA")]
+rlog2=glm(TASADEVARIACION~., data=vars2,family = binomial)
+#regresion3
+vars3=data_balanced_over[,c("TASADEVARIACION","NEOGOBERNANZA","GOBERNANZAEMBRIONARIA","INVERPRIVADA")]
+rlog3=glm(TASADEVARIACION~., data=vars3,family = binomial)
+#regresion4
+vars4=data_balanced_over[,c("TASADEVARIACION","NEOGOBERNANZA","GOBERNANZAEMBRIONARIA","INVERPRIVADA","INVERPUBLICA")]
+rlog4=glm(TASADEVARIACION~., data=vars4,family = binomial)
+#regresion5
+vars5=data_balanced_over[,c("TASADEVARIACION","NEOGOBERNANZA","GOBERNANZAEMBRIONARIA","INVERPRIVADA","INVERPUBLICA","Corrupcion")]
+rlog5=glm(TASADEVARIACION~., data=vars5,family = binomial)
+
+```
+
+Veamos todos:
+
+```{r}
+
+library(stargazer)
+
+stargazer(rlog1,rlog2,rlog3,rlog4,rlog5,type = "text",no.space = F,digits =3,digit.separator="")
+```
+1. Comparando modelos
+Viendo la información de Akaike (AIC). Esto sugiere que el cuarto modelo es el  peor y el quinto el mejor. Como los valores del AIC están muy cercanos confirmemos usando el test de razón de verosimilitud (likelihood ratio test -LRT):
+```{r}
+library(lmtest)
+
+lrtest(rlog1,rlog2, rlog3,rlog4,rlog5)
+```
+o alternativamente:
+```{r}
+library(pander)
+pander(lrtest(rlog1,rlog2, rlog3,rlog4,rlog5),caption = "LRT para los CINCO modelos")
+```
